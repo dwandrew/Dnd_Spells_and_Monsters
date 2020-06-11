@@ -1,0 +1,4 @@
+class Spells
+
+
+end
