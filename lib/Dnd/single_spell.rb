@@ -6,7 +6,8 @@ attr_accessor :_id, :index, :name, :desc, :casting_time, :classes, :subclasses, 
 @@all = []
 
 def initialize(name)
-    spell = Spells.all.detect{|spell| spell["name"] == name}
+    list= Spells.all
+    spell = list.detect{|spell| spell["name"] == name}
     spell_attributes(spell)
     save
 end

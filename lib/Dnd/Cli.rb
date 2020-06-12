@@ -1,10 +1,11 @@
 class Cli
-
+    attr_reader :list
 
     def initialize
         puts "Welcome to the Dnd 5th Edition Spellbook!"
         puts "Loading Spell list, it may take a few minutes"
         Spells.new
+        @list = Spells.all
         puts "Thanks for waiting!"
         puts"-------------------"
         menu
@@ -16,6 +17,7 @@ class Cli
         puts "Please choose from the following options:"
         puts "If you want a list of spells type 'List Spells'"
         puts "If you want to choose a spell and get its details, type 'By Name'"
+        puts "If you want to clear the terminal, type 'Clear'"
         puts "If you want to exit, type 'exit' "
         puts " "
         gets_user_input
@@ -28,7 +30,13 @@ class Cli
         elsif input.downcase == "by name"
             puts "Type Spell name"
             input = gets.strip
-            spell_by_name(input)
+             if @list.any?{|spell| spell["name"] == input}
+                spell_by_name(input)
+             else puts "Sorry, no spell of that name"
+                menu
+            end
+        elsif input.downcase == "clear"
+            clear
         elsif input.downcase =="exit"
             goodbye
         else
@@ -51,7 +59,9 @@ class Cli
     
     
     def list_spells
-        Spells.
+        array =[]
+        @list.each.with_index do |spell, index| array << "#{index+1}. #{spell["name"]}" end
+        puts array
         menu
     end
 
@@ -69,7 +79,9 @@ class Cli
         puts "Range: " + "#{spell.range}"
         puts ''
         puts "Description: " + "#{spell.desc[0]}"
+        if spell.higher_level
         puts "Higher Level: " + "#{spell.higher_level[0]}"
+        end
         puts ''
         # puts "" + "#{spell.}"
         # puts "" + "#{spell.}"

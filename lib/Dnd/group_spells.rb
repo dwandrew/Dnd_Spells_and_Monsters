@@ -1,26 +1,46 @@
 require_relative '../environment.rb'
 
 class GroupSpells
+    attr_reader :list
 
     def initialize
+       @list = Spells.all
     end
 
-    def self.find_by_school(school)
+    def find_by_school(school)
         selection = []
-        Spells.all.each do 
+        @list.each do 
             |spell| selection << spell if spell["school"]["name"] == school
         end
         selection
     end
 
-    def self.find_by_level(level)
+    def find_by_level(level)
+        selection = []
+        @list.each do 
+            |spell| selection << spell if spell["level"] == level.to_i
+        end
+        selection
     end
 
-    def self.find_by_ritual(ritual)
+    def find_by_ritual
+        selection = []
+        @list.each do 
+            |spell| selection << spell if spell["ritual"]
+        end
+        selection
     end
 
-    def self.find_by_class(klass)
-
+    def find_by_class(klass)
+        selection = []
+        @list.each do 
+            |spell| spell["classes"].each do |k| selection << spell if k["name"] == klass
+            end
+        end
+        selection
     end
 
 end
+
+
+binding.pry

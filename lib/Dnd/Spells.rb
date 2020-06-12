@@ -10,7 +10,6 @@ def initialize
     @list = spells["results"]
     @count = spells["count"]
     full_index
-    save
 end
 
 def self.index_list
@@ -33,4 +32,4 @@ end
 
 end
 
-binding.pry
+# binding.pry

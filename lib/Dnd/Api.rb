@@ -23,7 +23,10 @@ end
 
 def self.get_spell_url(url)
     url = url.gsub("/api/spells/", "")
-    self.get_spell_name(url)
+    uri = URI.parse("#{@@url}/spells/#{url}")
+    response = Net::HTTP.get_response(uri)
+    body = response.body
+    JSON(body)
 end
 
 end
