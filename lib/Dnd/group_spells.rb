@@ -7,6 +7,12 @@ class GroupSpells
        @list = Spells.all
     end
 
+    def spells_by_collection(collection)
+        group = []
+        collection.each do |spell| group << SingleSpell.new(spell["name"]) end
+        group
+    end
+
     def find_by_school(school)
         selection = []
         @list.each do 
@@ -41,6 +47,3 @@ class GroupSpells
     end
 
 end
-
-
-binding.pry
