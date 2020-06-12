@@ -9,19 +9,23 @@ def self.get_spells
     response = Net::HTTP.get_response(uri)
     body = response.body
     JSON(body)
-    # binding.pry
+   
 end
 
 
-def self.get_single_spell(name)
+def self.get_spell_name(name)
     uri = URI.parse("#{@@url}/spells/#{name}")
     response = Net::HTTP.get_response(uri)
     body = response.body
     JSON(body)
-    # binding.pry
+    
 end
 
+def self.get_spell_url(url)
+    url = url.gsub("/api/spells/", "")
+    self.get_spell_name(url)
+end
 
 end
 
-API.get_single_spell("acid-arrow")
+# API.get_single_spell("acid-arrow")
