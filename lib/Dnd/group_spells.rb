@@ -46,4 +46,11 @@ class GroupSpells
         selection
     end
 
+    def spell_by_name(name)
+        spell = SingleSpell.new(name)
+        puts display_spell(spell)
+    end
+
 end
+
+# binding.pry

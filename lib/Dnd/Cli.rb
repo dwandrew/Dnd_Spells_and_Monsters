@@ -1,3 +1,5 @@
+require_relative '../environment'
+
 class Cli
     attr_reader :list
 
@@ -18,6 +20,7 @@ class Cli
         puts "If you want a list of spells type 'List Spells'"
         puts "If you want to choose a spell and get its details, type 'By Name'"
         puts "If you want to get groups of spells by a selector, type 'By Group'"
+        puts "If you want to see a random spell, type 'Random'"
         puts "If you want to clear the terminal, type 'Clear'"
         puts "If you want to exit, type 'exit' "
         puts " "
@@ -33,9 +36,12 @@ class Cli
             input = gets.strip
              if @list.any?{|spell| spell["name"] == input}
                 spell_by_name(input)
+                menu
              else puts "Sorry, no spell of that name"
                 menu
             end
+        elsif input.downcase == 'random'
+            random_spell
         elsif input.downcase == 'by group'
             by_group
         elsif input.downcase == "clear"
@@ -58,6 +64,7 @@ class Cli
         puts "Ta-ra for now!"
         sleep(3)
         system("clear")
+        exit
     end
 
     def by_group
@@ -86,7 +93,8 @@ class Cli
         input = gets.strip
         if group.find_by_class(input)
             ls = group.find_by_class(input)
-            puts group.spells_by_collection(ls)
+            spell_group= group.spells_by_collection(ls)
+            display_list(spell_group)
         else puts "Sorry that class doesnt exist"
             by_class
         end
@@ -97,18 +105,20 @@ class Cli
         input = gets.strip
         if group.find_by_school(input)
             ls= group.find_by_school(input)
-            puts group.spells_by_collection(ls)
+            spell_group =  group.spells_by_collection(ls)
+            display_list(spell_group)
         else puts "Sorry that school doesnt exist"
             by_school
         end
     end
 
     def by_level(group)
-        puts "Input number between 1 & 9"
+        puts "Input number between 1 & 9, or Input '0' for Cantrips"
         input = gets.strip
-        if input.to_i < 10 && input.to_i >= 10
-            ls=  group.find_by_level(input)
-            puts group.spells_by_collection(ls)
+        if input.to_i < 10 && input.to_i >= 0
+            ls=  group.find_by_level(input.to_i)
+            spell_group = group.spells_by_collection(ls)
+            display_list(spell_group)
         else puts "Sorry that level doesnt exist"
             by_level
         end
@@ -116,19 +126,66 @@ class Cli
 
     def by_ritual(group)
             ls= group.find_by_ritual
-            puts group.spells_by_collection(ls)
+            spell_group = group.spells_by_collection(ls)
+            display_list(spell_group)
+    end
+
+    def display_list(spell_group)
+        puts "Would you like to see just the Names, or the full information for the spell list?"
+        puts "Type 'List' for just the names, 'Full' for full information," 
+        puts "'Spell' to choose an individual spell, or Menu' to return to the Menu"
+        input = gets.strip
+            if input.downcase == 'list'
+                spell_group.each.with_index(1) {|spell, index| puts "#{index}. #{display_spell_name(spell)}"}
+                display_list(spell_group)
+            elsif input.downcase == 'full'
+                spell_group.each {|spell| display_spell(spell)}
+                display_list(spell_group)
+            elsif input.downcase == 'spell'
+                puts "Please input spell name"
+                input = gets.strip
+                if spell_by_name(input)
+                    spell_by_name(input)
+                    display_list(spell_group)
+                else "Sorry thats not an option!"
+                    display_list(spell_group)
+                end
+            elsif input.downcase == 'menu'
+                menu
+            else puts "Sorry thats not an option!"
+                puts ""
+                display_list(spell_group)
+            end 
+
+            
+    end
+
+    def random_spell
+        r = @list.sample
+        spell = SingleSpell.new(r["name"])
+        display_spell(spell)
+        menu
     end
     
     
     def list_spells
         array =[]
-        @list.each.with_index do |spell, index| array << "#{index+1}. #{spell["name"]}" end
+        @list.each.with_index(1) do |spell, index| array << "#{index}. #{spell["name"]}" end
         puts array
         menu
     end
 
     def spell_by_name(name)
         spell = SingleSpell.new(name)
+        display_spell(spell)
+    end
+
+    def display_spell_name(spell)
+        spell.name
+    end
+
+
+    def display_spell(spell)
         puts ''
         puts "Name: "+ "#{spell.name}"
         puts "School: " + "#{spell.school["name"]}"
@@ -137,16 +194,17 @@ class Cli
         puts "Components: " + "#{spell.components.join(", ")}"
         puts "Material: " + "#{spell.material}"
         puts "Duration: " + "#{spell.duration}"
-        puts "Concentration: " + "#{spell.concentration}"
+        puts "Can be cast as ritual? " + "#{spell.ritual == true ? "Yes" : "No"}"
+        puts "Concentration: " + "#{spell.concentration == true ? "Required" : "No"}"
         puts "Range: " + "#{spell.range}"
         puts ''
-        puts "Description: " + "#{spell.desc[0]}"
+        puts "Description: " + "#{spell.desc.map{|words| words if words !=nil || words !=""}.join("\n")}"
         if spell.higher_level
         puts "Higher Level: " + "#{spell.higher_level[0]}"
         end
         puts ''
-        # puts "" + "#{spell.}"
-        # puts "" + "#{spell.}"
-        menu
     end
+
 end
+
+#  binding.pry
