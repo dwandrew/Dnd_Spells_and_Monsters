@@ -1,17 +1,38 @@
 require_relative '../environment.rb'
 
-class Monsters < Spells
+class Monsters
+    attr_accessor :list, :count
+
+    @@all =[]
 
     def initialize
-        spells= API.get_monsters
-        @list = spells["results"]
-        @count = spells["count"]
+        mons= API.get_monsters
+        @list = mons["results"]
+        @count = mons["count"]
         full_index
     end
 
     def full_index
-        @list.each{|spell| @@all << API.get_monster_url(spell['url'])}
+        @list.each{|mon| @@all << API.get_monster_url(mon['url'])}
     end
+
+
+    def self.index_list
+    array =[]
+    @@all.each_with_index do |mon, index| array<< "#{index+1}. #{mon["name"]}" end
+    array
+    end
+    
+    def self.all
+        @@all
+    end
+
+    def save
+        @@all<<self
+    end
+
+
+    
 
 end
 # binding.pry

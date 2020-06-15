@@ -17,30 +17,172 @@ class Cli
         puts "Loading Monsters list, it may take a few minutes"
             if Monsters.all == []
                 Monsters.new
-                @list["monsters"] = Monsters.all
+                @list[:monsters] = Monsters.all
                 else
-                @list["monsters"] = Monsters.all
+                @list[:monsters] = Monsters.all
             end
             puts "Thanks for waiting!"
             puts"-------------------"
             menu_monsters
-        elsif input.downcase == "spells"
+        elsif input.downcase == 'spells'
             puts "Loading Spell list, it may take a few minutes"
             if Spells.all == []
             Spells.new
-            @list["spells"] = Spells.all
+            @list[:spells] = Spells.all
             else
-            @list["spells"] = Spells.all
+            @list[:spells] = Spells.all
             end
             puts "Thanks for waiting!"
-        puts"-------------------"
+            puts"-------------------"
             menu_spells
         else "Sorry that input is not valid"
             main_menu
         end
         
     end
+    # -----------------------------------------------------------------------------------------
 
+    def menu_monsters
+        puts ''
+        puts "Welcome to the Monsters Menu"
+        puts "Please choose from the following options:"
+        puts "If you want a list of Monsters type 'List Mons'"
+        puts "If you want to choose a Monster and get its details, type 'By Name'"
+        puts "If you want to get groups of Monsters by a selector, type 'By Group'"
+        puts "If you want to see a random Monster, type 'Random'"
+        puts "If you want to clear the terminal, type 'Clear'"
+        puts "If you want to return to the Main Menu, type 'Main'"
+        puts "If you want to exit, type 'exit' "
+        puts " "
+        gets_user_input_mons
+    end
+
+    def gets_user_input_mons
+        input = gets.strip
+        if input.downcase == "list mons"
+            list_mons
+        elsif input.downcase =='main'
+            main_menu
+        elsif input.downcase == "by name"
+            puts "Type Monster name"
+            input = gets.strip
+             if @list["monsters"].any?{|monster| monster["name"] == input}
+                monster_by_name(input)
+                menu_monsters
+             else puts "Sorry, no monster of that name"
+                menu_monsters
+            end
+        elsif input.downcase == 'random'
+            random_monster
+        elsif input.downcase == 'by group'
+            by_group
+        elsif input.downcase == "clear"
+            clear
+        elsif input.downcase =="exit"
+            goodbye
+        else
+            puts "Sorry, that input is not viable"
+            puts " "
+            menu_monsters
+        end
+    end 
+
+    def random_monster
+        r = @list[:monsters].sample
+        mon = SingleMonster.new(r["name"])
+        display_mon(mon)
+        menu_monsters
+    end
+
+    def list_mons
+        array =[]
+        @list["monsters"].each.with_index(1) do |mon, index| array << "#{index}. #{mon["name"]}" end
+        puts array
+        menu_monsters
+    end
+
+    def display_mon(mon)
+        puts ""
+        puts "Name: " + "#{mon.name}"
+        puts "Type: " + "#{mon.type}"
+        if mon.subtype
+        puts "Subtype: " + "#{mon.subtype}"
+        end
+        puts "Size: "+ "#{mon.size}" 
+        puts "Alignment: " +"#{mon.alignment}"
+        puts "Armour class: " + "#{mon.armor_class}"
+        puts "Hit Points: " + "#{mon.hit_points}"
+        puts "Hit Dice: " + "#{mon.hit_dice}"
+        puts "Challenge Rating: " + "#{mon.challenge_rating}"
+        puts "Speed: " + "#{mon.speed.map{|k,v| "#{k}: #{v}"}.join("\n")}"
+        if mon.other_speeds
+            puts "Other speeds: " + "#{mon.other_speeds}"
+        end
+        puts 'Ability Scores:'
+        puts "  Str: "+ "#{mon.strength}"
+        puts "  Dex: " + "#{mon.dexterity}"
+        puts "  Con: " +  "#{mon.constitution}"
+        puts "  Int: " + "#{mon.intelligence}"
+        puts "  Wis: " +  "#{mon.wisdom}"
+        puts "  Cha: " + "#{mon.charisma}"
+        puts "" 
+        puts "Proficiencies: " 
+        puts "#{mon.proficiencies.map{|save| "#{save["name"]}: +#{save["value"]}"}.join("\n")}"
+        puts ""
+        puts "Damage and Condition Modifiers"
+        puts "Damage Resistances: " + "#{mon.damage_resistances.join(", ")}"
+        puts "Damage Vulnerabilities: " + "#{mon.damage_vulnerabilities.join(", ")}"
+        puts "Damage Immunities: " + "#{mon.damage_immunities.join(", ")}"
+        puts "Condition Immunities: " + "#{mon.condition_immunities.map{|value| value["name"]}.join(", ")}"
+        puts ""
+        puts "Sense: " + "#{mon.senses.map{|k,v| "#{k}: #{v}"}.join("\n")}"
+        puts "Languages: " + "#{mon.languages}"
+         if mon.special_abilities
+            puts "Special Abilities: "
+            puts special_abilities(mon)
+        end
+
+        puts "Actions:"
+        puts "#{mon.actions.map{|k,v| "#{k}: #{v}"}.join("\n")}}"
+
+        if mon.legendary_actions
+            puts "Legendary Actions: "
+            puts "#{mon.legendary_actions.map{|k,v| "#{k}: #{v}"}.join("\n")}}"
+        end
+    end
+
+    def ability_usage(ability)
+        if ability["usage"]['dice']
+            "#{ability["usage"]['type']} of equal or higher than #{ability["usage"]['min_value']} on #{ability["usage"]['dice']}"
+            else "#{ability["usage"]['times']} #{ability["usage"]['type']}"
+        end
+    end
+    
+    def special_abilities(mon)
+        special = mon.special_abilities.map do |ability| 
+            if ability["dc"] && !ability["usage"] && !ability["damage"]
+                "#{ability["name"]}: #{ability["desc"]} \n
+                Save Ability: #{ability["dc"]["dc_type"]["name"]} \n
+                DC: #{ability["dc"]["dc_value"]}"
+            elsif !ability["dc"] && ability["usage"] && !ability["damage"]
+                "#{ability["name"]} (#{ability_usage(ability)}): #{ability["desc"]} \n"
+            elsif ability["dc"] && ability["usage"] && !ability["damage"]
+                "#{ability["name"]}: #{ability["desc"]} \n
+                Save Ability: #{ability["dc"]["dc_type"]["name"]} \n
+                DC: #{ability["dc"]["dc_value"]} \n
+                Usage: #{ability_usage(ability)}"
+            elsif ability["dc"] && ability["usage"] && ability["damage"]
+                "#{ability["name"]}: #{ability["desc"]} \n
+                Save Ability: #{ability["dc"]["dc_type"]["name"]} \n
+                DC: #{ability["dc"]["dc_value"]} \n
+                Usage: #{ability_usage(ability)} \n
+                Damage: #{ability["damage"].map{|damage| "#{damage["damage_dice"]} +#{damage["damage_bonus"]} #{damage["damage_type"]["name"]} Damage"} }"
+            else "#{ability["name"]}: #{ability["desc"]}"
+            end
+        end 
+        special
+    end
+    # -----------------------------------------------------------------------------------------
     def menu_spells
         puts ''
         puts "Welcome to the Spells Menu"
@@ -50,19 +192,22 @@ class Cli
         puts "If you want to get groups of spells by a selector, type 'By Group'"
         puts "If you want to see a random spell, type 'Random'"
         puts "If you want to clear the terminal, type 'Clear'"
+        puts "If you want to return to the Main Menu, type 'Main'"
         puts "If you want to exit, type 'exit' "
         puts " "
-        gets_user_input
+        gets_user_input_spell
     end
 
-    def gets_user_input
+    def gets_user_input_spell
         input = gets.strip
         if input.downcase == "list spells"
             list_spells
+        elsif input.downcase =='main'
+            main_menu
         elsif input.downcase == "by name"
             puts "Type Spell name"
             input = gets.strip
-             if @list["spells"].any?{|spell| spell["name"] == input}
+             if @list[:spells].any?{|spell| spell["name"] == input}
                 spell_by_name(input)
                 menu_spells
              else puts "Sorry, no spell of that name"
@@ -83,17 +228,7 @@ class Cli
         end
     end
         
-    def clear
-        system("clear")
-        menu_spells
-    end
-        
-    def goodbye
-        puts "Ta-ra for now!"
-        sleep(3)
-        system("clear")
-        exit
-    end
+  
 
     def by_group
         group = GroupSpells.new
@@ -172,15 +307,16 @@ class Cli
 
     def display_options_classes 
         class_options =[]
-        @list["spells"].each do |spell| spell["classes"].each do |klass| class_options << klass["name"] end end
+        @list[:spells].each do |spell| spell["classes"].each do |klass| class_options << klass["name"] end end
         class_options.uniq!
         class_options.each{|klass| puts klass }
         
     end
+    :spells
 
     def display_options_schools
         school_options =[]
-        @list["spells"].each do |spell| school_options << spell["school"]["name"] end
+        @list[:spells].each do |spell| school_options << spell["school"]["name"] end
         school_options.uniq!
         school_options.each{|school| puts school}
         
@@ -217,7 +353,7 @@ class Cli
     end
 
     def random_spell
-        r = @list["spells"].sample
+        r = @list[:spells].sample
         spell = SingleSpell.new(r["name"])
         display_spell(spell)
         menu_spells
@@ -226,7 +362,7 @@ class Cli
     
     def list_spells
         array =[]
-        @list["spells"].each.with_index(1) do |spell, index| array << "#{index}. #{spell["name"]}" end
+        @list[:spells].each.with_index(1) do |spell, index| array << "#{index}. #{spell["name"]}" end
         puts array
         menu_spells
     end
@@ -260,6 +396,19 @@ class Cli
         puts "Higher Level: " + "#{spell.higher_level[0]}"
         end
         puts ''
+    end
+
+    # ----------------------------------------------------------------
+    def clear
+        system("clear")
+        menu_spells
+    end
+        
+    def goodbye
+        puts "Ta-ra for now!"
+        sleep(3)
+        system("clear")
+        exit
     end
 
 end
