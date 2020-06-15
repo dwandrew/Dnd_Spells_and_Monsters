@@ -21,8 +21,22 @@ def self.get_spell_url(url)
     JSON(body)
 end
 
+def self.get_monsters
+    uri = URI.parse("#{@@url}monsters/")
+    response = Net::HTTP.get_response(uri)
+    body = response.body
+    JSON(body)
 end
 
+def self.get_monster_url(url)
+    url = url.gsub("/api/monsters/", "")
+    uri = URI.parse("#{@@url}/monsters/#{url}")
+    response = Net::HTTP.get_response(uri)
+    body = response.body
+    JSON(body)
+end
+
+end
 # API.get_single_spell("acid-arrow")
 
 # def self.get_spell_name(name)
@@ -32,4 +46,6 @@ end
 #     JSON(body)
     
 # end
+
+# binding.pry
 

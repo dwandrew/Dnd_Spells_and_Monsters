@@ -10,7 +10,9 @@ require_relative './Dnd/cli.rb'
 require_relative './Dnd/spells.rb'
 require_relative './Dnd/single_spell.rb'
 require_relative './Dnd/group_spells.rb'
-
+require_relative './Dnd/monsters.rb'
+require_relative './Dnd/single_monster.rb'
+require_relative './Dnd/group_monsters.rb'
 
 
 module Dnd

@@ -5,17 +5,45 @@ class Cli
 
     def initialize
         puts "Welcome to the Dnd 5th Edition Spellbook!"
-        puts "Loading Spell list, it may take a few minutes"
-        Spells.new
-        @list = Spells.all
-        puts "Thanks for waiting!"
-        puts"-------------------"
-        menu
+        @list = {monsters: [], spells: []}
+        main_menu
     end
 
-    def menu
+    def main_menu
+        puts "Would you like to load Monsterbook or Spellbook?"
+        puts "Input 'Monsters' or 'Spells'"
+        input = gets.strip
+        if input.downcase == "monsters"
+        puts "Loading Monsters list, it may take a few minutes"
+            if Monsters.all == []
+                Monsters.new
+                @list["monsters"] = Monsters.all
+                else
+                @list["monsters"] = Monsters.all
+            end
+            puts "Thanks for waiting!"
+            puts"-------------------"
+            menu_monsters
+        elsif input.downcase == "spells"
+            puts "Loading Spell list, it may take a few minutes"
+            if Spells.all == []
+            Spells.new
+            @list["spells"] = Spells.all
+            else
+            @list["spells"] = Spells.all
+            end
+            puts "Thanks for waiting!"
+        puts"-------------------"
+            menu_spells
+        else "Sorry that input is not valid"
+            main_menu
+        end
+        
+    end
+
+    def menu_spells
         puts ''
-        puts "Welcome to the main menu"
+        puts "Welcome to the Spells Menu"
         puts "Please choose from the following options:"
         puts "If you want a list of spells type 'List Spells'"
         puts "If you want to choose a spell and get its details, type 'By Name'"
@@ -34,11 +62,11 @@ class Cli
         elsif input.downcase == "by name"
             puts "Type Spell name"
             input = gets.strip
-             if @list.any?{|spell| spell["name"] == input}
+             if @list["spells"].any?{|spell| spell["name"] == input}
                 spell_by_name(input)
-                menu
+                menu_spells
              else puts "Sorry, no spell of that name"
-                menu
+                menu_spells
             end
         elsif input.downcase == 'random'
             random_spell
@@ -51,13 +79,13 @@ class Cli
         else
             puts "Sorry, that input is not viable"
             puts " "
-            menu
+            menu_spells
         end
     end
         
     def clear
         system("clear")
-        menu
+        menu_spells
     end
         
     def goodbye
@@ -85,30 +113,40 @@ class Cli
         else 
             puts "Sorry thats not an option!"
         end 
-        menu
+        menu_spells
     end
 
     def by_klass(group)
-        "Please input class:"
+        puts "Please type 'List' for a list of options or input class:"
         input = gets.strip
-        if group.find_by_class(input)
+        if input.downcase != 'list' && group.find_by_class(input)
             ls = group.find_by_class(input)
             spell_group= group.spells_by_collection(ls)
             display_list(spell_group)
+            puts ''
+        elsif input.downcase == 'list'
+            display_options_classes
+            puts ''
+            by_klass(group)
         else puts "Sorry that class doesnt exist"
-            by_class
+            by_klass(group)
         end
     end
 
     def by_school(group)
-        puts "Please input school name:"
+        puts "Please type 'List' for a list of options or input school name:"
         input = gets.strip
-        if group.find_by_school(input)
+        if input.downcase != 'list' && group.find_by_school(input)
             ls= group.find_by_school(input)
             spell_group =  group.spells_by_collection(ls)
             display_list(spell_group)
+            puts ''
+        elsif input.downcase == 'list'
+            display_options_schools
+            puts ''
+            by_school(group)
         else puts "Sorry that school doesnt exist"
-            by_school
+            by_school(group)
         end
     end
 
@@ -118,9 +156,10 @@ class Cli
         if input.to_i < 10 && input.to_i >= 0
             ls=  group.find_by_level(input.to_i)
             spell_group = group.spells_by_collection(ls)
+            puts ''
             display_list(spell_group)
         else puts "Sorry that level doesnt exist"
-            by_level
+            by_level(group)
         end
     end
 
@@ -128,12 +167,29 @@ class Cli
             ls= group.find_by_ritual
             spell_group = group.spells_by_collection(ls)
             display_list(spell_group)
+            puts ''
+    end
+
+    def display_options_classes 
+        class_options =[]
+        @list["spells"].each do |spell| spell["classes"].each do |klass| class_options << klass["name"] end end
+        class_options.uniq!
+        class_options.each{|klass| puts klass }
+        
+    end
+
+    def display_options_schools
+        school_options =[]
+        @list["spells"].each do |spell| school_options << spell["school"]["name"] end
+        school_options.uniq!
+        school_options.each{|school| puts school}
+        
     end
 
     def display_list(spell_group)
         puts "Would you like to see just the Names, or the full information for the spell list?"
         puts "Type 'List' for just the names, 'Full' for full information," 
-        puts "'Spell' to choose an individual spell, or Menu' to return to the Menu"
+        puts "'Spell' to choose an individual spell, or 'Menu' to return to the Spells Menu"
         input = gets.strip
             if input.downcase == 'list'
                 spell_group.each.with_index(1) {|spell, index| puts "#{index}. #{display_spell_name(spell)}"}
@@ -151,7 +207,7 @@ class Cli
                     display_list(spell_group)
                 end
             elsif input.downcase == 'menu'
-                menu
+                menu_spells
             else puts "Sorry thats not an option!"
                 puts ""
                 display_list(spell_group)
@@ -161,18 +217,18 @@ class Cli
     end
 
     def random_spell
-        r = @list.sample
+        r = @list["spells"].sample
         spell = SingleSpell.new(r["name"])
         display_spell(spell)
-        menu
+        menu_spells
     end
     
     
     def list_spells
         array =[]
-        @list.each.with_index(1) do |spell, index| array << "#{index}. #{spell["name"]}" end
+        @list["spells"].each.with_index(1) do |spell, index| array << "#{index}. #{spell["name"]}" end
         puts array
-        menu
+        menu_spells
     end
 
     def spell_by_name(name)
@@ -190,6 +246,7 @@ class Cli
         puts "Name: "+ "#{spell.name}"
         puts "School: " + "#{spell.school["name"]}"
         puts "Casting time: " + "#{spell.casting_time}"
+        puts "Classes: " + "#{spell.classes.map{|words| words["name"] if words["name"] !=nil || words["name"] !=""}.join(", ")}"
         puts "Level: " + "#{spell.level}"
         puts "Components: " + "#{spell.components.join(", ")}"
         puts "Material: " + "#{spell.material}"
@@ -206,5 +263,3 @@ class Cli
     end
 
 end
-
-#  binding.pry
