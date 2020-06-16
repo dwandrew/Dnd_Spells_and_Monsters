@@ -9,7 +9,6 @@ def self.get_spells
     response = Net::HTTP.get_response(uri)
     body = response.body
     JSON(body)
-   
 end
 
 
