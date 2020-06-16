@@ -21,6 +21,7 @@ class Cli
                 else
                 @list[:monsters] = Monsters.all
             end
+            puts"-------------------"
             puts "Thanks for waiting!"
             puts"-------------------"
             menu_monsters
@@ -32,6 +33,7 @@ class Cli
             else
             @list[:spells] = Spells.all
             end
+            puts"-------------------"
             puts "Thanks for waiting!"
             puts"-------------------"
             menu_spells
@@ -45,15 +47,15 @@ class Cli
 
     def menu_monsters
         puts ''
-        puts "Welcome to the Monsters Menu"
+        puts "Welcome to the #{"Monsters Menu".colorize(:yellow)}"
         puts "Please choose from the following options:"
-        puts "If you want a list of Monsters type 'List Mons'"
-        puts "If you want to choose a Monster and get its details, type 'By Name'"
-        puts "If you want to get groups of Monsters by a selector, type 'By Group'"
-        puts "If you want to see a random Monster, type 'Random'"
-        puts "If you want to clear the terminal, type 'Clear'"
-        puts "If you want to return to the Main Menu, type 'Main'"
-        puts "If you want to exit, type 'exit' "
+        puts "If you want a list of Monsters type #{'List Mons'.colorize(:green)}"
+        puts "If you want to choose a Monster and get its details, type #{'By Name'.colorize(:green)}"
+        puts "If you want to get groups of Monsters by a selector, type #{'By Group'.colorize(:green)}"
+        puts "If you want to see a random Monster, type #{'Random'.colorize(:green)}"
+        puts "If you want to clear the terminal, type #{'Clear'.colorize(:blue)}"
+        puts "If you want to return to the Main Menu, type #{'Main'.colorize(:magenta)}"
+        puts "If you want to exit, type #{'exit'.colorize(:red)}"
         puts " "
         gets_user_input_mons
     end
@@ -113,58 +115,60 @@ class Cli
 
     def display_mon(mon)
         puts ""
-        puts "Name: " + "#{mon.name}"
-        puts "Type: " + "#{mon.type}"
+        puts "Name: ".colorize(:cyan) + "#{mon.name}"
+        puts "Type: ".colorize(:cyan) + "#{mon.type}"
         if mon.subtype
-        puts "Subtype: " + "#{mon.subtype}"
+        puts "Subtype: ".colorize(:cyan) + "#{mon.subtype}"
         end
-        puts "Size: "+ "#{mon.size}" 
-        puts "Alignment: " +"#{mon.alignment}"
-        puts "Armour class: " + "#{mon.armor_class}"
-        puts "Hit Points: " + "#{mon.hit_points}"
-        puts "Hit Dice: " + "#{mon.hit_dice}"
-        puts "Challenge Rating: " + "#{mon.challenge_rating}"
-        puts "Speed: " + "#{mon.speed.map{|k,v| "#{k}: #{v}"}.join("\n")}"
+        puts "Size: ".colorize(:cyan)+ "#{mon.size}" 
+        puts "Alignment: ".colorize(:cyan) +"#{mon.alignment}"
+        puts "Armour class: ".colorize(:cyan) + "#{mon.armor_class}"
+        puts "Hit Points: ".colorize(:cyan) + "#{mon.hit_points}"
+        puts "Hit Dice: ".colorize(:cyan) + "#{mon.hit_dice}"
+        puts "Challenge Rating: ".colorize(:cyan) + "#{mon.challenge_rating}"
+        puts "Speed: ".colorize(:cyan) + "#{mon.speed.map{|k,v| "#{k}: #{v}"}.join("\n")}"
         if mon.other_speeds
-            puts "Other speeds: " + "#{mon.other_speeds}"
+            puts "Other speeds: ".colorize(:cyan) + "#{mon.other_speeds}"
         end
-        puts 'Ability Scores:'
-        puts "  Str: "+ "#{mon.strength}"
-        puts "  Dex: " + "#{mon.dexterity}"
-        puts "  Con: " +  "#{mon.constitution}"
-        puts "  Int: " + "#{mon.intelligence}"
-        puts "  Wis: " +  "#{mon.wisdom}"
-        puts "  Cha: " + "#{mon.charisma}"
+        puts 'Ability Scores:'.colorize(:cyan)
+        puts "  Str: ".colorize(:yellow)+ "#{mon.strength}"
+        puts "  Dex: ".colorize(:yellow) + "#{mon.dexterity}"
+        puts "  Con: ".colorize(:yellow) +  "#{mon.constitution}"
+        puts "  Int: ".colorize(:yellow) + "#{mon.intelligence}"
+        puts "  Wis: ".colorize(:yellow) +  "#{mon.wisdom}"
+        puts "  Cha: ".colorize(:yellow) + "#{mon.charisma}"
         puts "" 
-        puts "Proficiencies: " 
+        puts "Proficiencies: ".colorize(:cyan) 
         puts "#{mon.proficiencies.map{|save| "#{save["name"]}: +#{save["value"]}"}.join("\n")}"
         puts ""
-        puts "Damage and Condition Modifiers"
-        puts "Damage Resistances: " + "#{mon.damage_resistances.join(", ")}"
-        puts "Damage Vulnerabilities: " + "#{mon.damage_vulnerabilities.join(", ")}"
-        puts "Damage Immunities: " + "#{mon.damage_immunities.join(", ")}"
-        puts "Condition Immunities: " + "#{mon.condition_immunities.map{|value| value["name"]}.join(", ")}"
+        puts "Damage and Condition Modifiers".colorize(:cyan)
+        puts "Damage Resistances: ".colorize(:light_red) + "#{mon.damage_resistances.join(", ")}"
+        puts "Damage Vulnerabilities: ".colorize(:light_red) + "#{mon.damage_vulnerabilities.join(", ")}"
+        puts "Damage Immunities: ".colorize(:light_red) + "#{mon.damage_immunities.join(", ")}"
+        puts "Condition Immunities: ".colorize(:light_red) + "#{mon.condition_immunities.map{|value| value["name"]}.join(", ")}"
         puts ""
-        puts "Sense: " + "#{mon.senses.map{|k,v| "#{k}: #{v}"}.join("\n")}"
-        puts "Languages: " + "#{mon.languages}"
+        puts "Senses: ".colorize(:cyan)
+        puts "#{mon.senses.map{|k,v| "#{k}: #{v}"}.join("\n")}"
+        puts "Languages: ".colorize(:cyan)
+        puts "#{mon.languages}"
          if mon.special_abilities
             puts ''
-            puts "Special Abilities: "
+            puts "Special Abilities: ".colorize(:cyan)
             puts special_abilities(mon)
         end
         puts ''
-        puts "Actions:"
+        puts "Actions:".colorize(:cyan)
         puts actions(mon)
 
         if mon.reactions
             puts ''
-            puts "Reactions: "
+            puts "Reactions: ".colorize(:cyan)
             puts "#{mon.reactions.map{|action| "#{action["name"]}: #{action["desc"]} \n"}.join("\n")}
             "
         end
         if mon.legendary_actions
             puts ''
-            puts "Legendary Actions: "
+            puts "Legendary Actions: ".colorize(:cyan)
             puts "#{mon.legendary_actions.map{|action| "#{action["name"]}: #{action["desc"]} \n"}.join("\n") }"
         end
     end
@@ -214,8 +218,8 @@ class Cli
     def mon_by_group
         group = GroupMonsters.new
         puts "Would you like to select via:"
-        puts "Combat rating, Type, or Size?"
-        puts "Type 'CR', 'Type', or 'Size'"
+        puts "#{"Combat rating".colorize(:green)}, #{"Type".colorize(:green)}, or #{"Size".colorize(:green)}?"
+        puts "Type #{'CR'.colorize(:green)}, #{'Type'.colorize(:green)}, or #{'Size'.colorize(:green)}"
         puts ''
         input = gets.strip
         if input.downcase == "cr"
@@ -235,7 +239,7 @@ class Cli
     end
 
     def by_cr(group)
-        puts "Input number between 0 & 30, or Input '1/2', '1/4' or '1/8'"
+        puts "Input number between #{"0 & 30".colorize(:green)}, or Input #{'1/2'.colorize(:green)}, #{'1/4'.colorize(:green)} or #{'1/8'.colorize(:green)}"
         input = gets.strip
         if input.to_f <= 30 && input.to_f >= 0
             ls=  group.find_by_cr(input)
@@ -253,7 +257,7 @@ class Cli
     end
 
     def by_type(group)
-        puts "Input the type of Monsters you want to view, or 'List' to see the options"
+        puts "Input the type of Monsters you want to view, or #{'List'.colorize(:green)} to see the options"
         input = gets.strip
         if input.downcase !="list" && group.find_by_type(input) !=[]
             ls = group.find_by_type(input)
@@ -268,7 +272,7 @@ class Cli
         end
     end
     def by_size(group)
-        puts "Input the size of Monsters you want to view, or 'List' to see the options"
+        puts "Input the size of Monsters you want to view, or #{'List'.colorize(:green)} to see the options"
         input = gets.strip
         if input.downcase == "list"
             display_options_size
@@ -299,8 +303,8 @@ class Cli
 
     def display_mon_list(mon_group)
         puts "Would you like to see just the Names, or the full information for the Monster list?"
-        puts "Type 'List' for just the names, 'Full' for full information," 
-        puts "'Monster' to choose an individual Monster, or 'Menu' to return to the Monster Menu"
+        puts "Type #{'List'.colorize(:green)} for just the names, #{'Full'.colorize(:green)} for full information," 
+        puts "#{'Monster'.colorize(:green)} to choose an individual Monster, or #{'Menu'.colorize(:green)} to return to the Monster Menu"
         input = gets.strip
             if input.downcase == 'list'
                 mon_group.each.with_index(1) {|mon, index| puts "#{index}. #{display_mon_name(mon)}"}
@@ -331,15 +335,15 @@ class Cli
     # -----------------------------------------------------------------------------------------
     def menu_spells
         puts ''
-        puts "Welcome to the Spells Menu"
+        puts "Welcome to the #{"Spells Menu".colorize(:yellow)}"
         puts "Please choose from the following options:"
-        puts "If you want a list of spells type 'List Spells'"
-        puts "If you want to choose a spell and get its details, type 'By Name'"
-        puts "If you want to get groups of spells by a selector, type 'By Group'"
-        puts "If you want to see a random spell, type 'Random'"
-        puts "If you want to clear the terminal, type 'Clear'"
-        puts "If you want to return to the Main Menu, type 'Main'"
-        puts "If you want to exit, type 'exit' "
+        puts "If you want a list of spells type #{'List Spells'.colorize(:green)}"
+        puts "If you want to choose a spell and get its details, type #{'By Name'.colorize(:green)}"
+        puts "If you want to get groups of spells by a selector, type #{'By Group'.colorize(:green)}"
+        puts "If you want to see a random spell, type #{'Random'.colorize(:green)}"
+        puts "If you want to clear the terminal, type #{'Clear'.colorize(:blue)}"
+        puts "If you want to return to the Main Menu, type #{'Main'.colorize(:magenta)}"
+        puts "If you want to exit, type #{'exit'.colorize(:red)}"
         puts " "
         gets_user_input_spell
     end
@@ -379,8 +383,8 @@ class Cli
     def by_group
         group = GroupSpells.new
         puts "Would you like to select via:"
-        puts "Class, School, Level, if its a Ritual?"
-        puts "Type 'Class', 'School', 'Level, or 'Ritual'"
+        puts "#{"Class".colorize(:green)}, #{"School".colorize(:green)}, #{"Level".colorize(:green)}, if its a #{"Ritual".colorize(:green)}?"
+        puts "Type #{'Class'.colorize(:green)}, #{'School'.colorize(:green)}, #{'Level'.colorize(:green)}, or #{'Ritual'.colorize(:green)}"
         puts ''
         input = gets.strip
         if input.downcase == "class"
@@ -398,7 +402,7 @@ class Cli
     end
 
     def by_klass(group)
-        puts "Please type 'List' for a list of options or input class:"
+        puts "Please type #{'List'.colorize(:green)} for a list of options or input class:"
         input = gets.strip
         if input.downcase != 'list' && group.find_by_class(input)
             ls = group.find_by_class(input)
@@ -415,7 +419,7 @@ class Cli
     end
 
     def by_school(group)
-        puts "Please type 'List' for a list of options or input school name:"
+        puts "Please type #{'List'.colorize(:green)} for a list of options or input school name:"
         input = gets.strip
         if input.downcase != 'list' && group.find_by_school(input)
             ls= group.find_by_school(input)
@@ -432,7 +436,7 @@ class Cli
     end
 
     def by_level(group)
-        puts "Input number between 1 & 9, or Input '0' for Cantrips"
+        puts "Input number between #{"1 & 9".colorize(:green)}, or Input #{'0'.colorize(:green)} for Cantrips"
         input = gets.strip
         if input.to_i < 10 && input.to_i >= 0
             ls=  group.find_by_level(input.to_i)
@@ -469,8 +473,8 @@ class Cli
 
     def display_list(spell_group)
         puts "Would you like to see just the Names, or the full information for the spell list?"
-        puts "Type 'List' for just the names, 'Full' for full information," 
-        puts "'Spell' to choose an individual spell, or 'Menu' to return to the Spells Menu"
+        puts "Type #{'List'.colorize(:green)} for just the names, #{'Full'.colorize(:green)} for full information," 
+        puts "#{'Spell'.colorize(:green)} to choose an individual spell, or #{'Menu'.colorize(:green)} to return to the Spells Menu"
         input = gets.strip
             if input.downcase == 'list'
                 spell_group.each.with_index(1) {|spell, index| puts "#{index}. #{display_spell_name(spell)}"}
@@ -524,21 +528,21 @@ class Cli
 
     def display_spell(spell)
         puts ''
-        puts "Name: "+ "#{spell.name}"
-        puts "School: " + "#{spell.school["name"]}"
-        puts "Casting time: " + "#{spell.casting_time}"
-        puts "Classes: " + "#{spell.classes.map{|words| words["name"] if words["name"] !=nil || words["name"] !=""}.join(", ")}"
-        puts "Level: " + "#{spell.level}"
-        puts "Components: " + "#{spell.components.join(", ")}"
-        puts "Material: " + "#{spell.material}"
-        puts "Duration: " + "#{spell.duration}"
-        puts "Can be cast as ritual? " + "#{spell.ritual == true ? "Yes" : "No"}"
-        puts "Concentration: " + "#{spell.concentration == true ? "Required" : "No"}"
-        puts "Range: " + "#{spell.range}"
+        puts "Name: ".colorize(:cyan)+ "#{spell.name}"
+        puts "School: ".colorize(:cyan) + "#{spell.school["name"]}"
+        puts "Casting time: ".colorize(:cyan) + "#{spell.casting_time}"
+        puts "Classes: ".colorize(:cyan) + "#{spell.classes.map{|words| words["name"] if words["name"] !=nil || words["name"] !=""}.join(", ")}"
+        puts "Level: ".colorize(:cyan) + "#{spell.level}"
+        puts "Components: ".colorize(:cyan) + "#{spell.components.join(", ")}"
+        puts "Material: ".colorize(:cyan) + "#{spell.material}"
+        puts "Duration: ".colorize(:cyan) + "#{spell.duration}"
+        puts "Can be cast as ritual? ".colorize(:cyan) + "#{spell.ritual == true ? "Yes" : "No"}"
+        puts "Concentration: ".colorize(:cyan) + "#{spell.concentration == true ? "Required" : "No"}"
+        puts "Range: ".colorize(:cyan) + "#{spell.range}"
         puts ''
-        puts "Description: " + "#{spell.desc.map{|words| words if words !=nil || words !=""}.join("\n")}"
+        puts "Description: ".colorize(:cyan) + "#{spell.desc.map{|words| words if words !=nil || words !=""}.join("\n")}"
         if spell.higher_level
-        puts "Higher Level: " + "#{spell.higher_level[0]}"
+        puts "Higher Level: ".colorize(:cyan) + "#{spell.higher_level[0]}"
         end
         puts ''
     end
