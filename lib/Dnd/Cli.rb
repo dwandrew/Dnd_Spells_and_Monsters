@@ -66,7 +66,7 @@ class Cli
         elsif input.downcase == "by name"
             puts "Type Monster name"
             input = gets.strip
-             if @list["monsters"].any?{|monster| monster["name"] == input}
+             if @list[:monsters].any?{|monster| monster["name"] == input}
                 monster_by_name(input)
                 menu_monsters
              else puts "Sorry, no monster of that name"
@@ -86,6 +86,12 @@ class Cli
             menu_monsters
         end
     end 
+
+    def monster_by_name(name)
+        mon = SingleMonster.new(name)
+        display_mon(mon)
+        menu_monsters
+    end
 
     def random_monster
         r = @list[:monsters].sample
@@ -138,16 +144,18 @@ class Cli
         puts "Sense: " + "#{mon.senses.map{|k,v| "#{k}: #{v}"}.join("\n")}"
         puts "Languages: " + "#{mon.languages}"
          if mon.special_abilities
+            puts ''
             puts "Special Abilities: "
             puts special_abilities(mon)
         end
-
+        puts ''
         puts "Actions:"
-        puts "#{mon.actions.map{|k,v| "#{k}: #{v}"}.join("\n")}}"
+        puts actions(mon)
 
         if mon.legendary_actions
+            puts ''
             puts "Legendary Actions: "
-            puts "#{mon.legendary_actions.map{|k,v| "#{k}: #{v}"}.join("\n")}}"
+            puts "#{mon.legendary_actions.map{|action| "#{action["name"]}: #{action["desc"]} \n"}.join("\n") }"
         end
     end
 
@@ -157,30 +165,42 @@ class Cli
             else "#{ability["usage"]['times']} #{ability["usage"]['type']}"
         end
     end
+
+    def actions(mon)
+        actions = mon.actions.map do |action| 
+            if action["usage"]
+            "#{action["name"]} (#{ability_usage(action)}): #{action["desc"]}
+            "
+            
+            else 
+            "#{action["name"]}: #{action["desc"]}
+            "
+            end
+        end
+    end
     
     def special_abilities(mon)
         special = mon.special_abilities.map do |ability| 
             if ability["dc"] && !ability["usage"] && !ability["damage"]
-                "#{ability["name"]}: #{ability["desc"]} \n
-                Save Ability: #{ability["dc"]["dc_type"]["name"]} \n
-                DC: #{ability["dc"]["dc_value"]}"
+                "#{ability["name"]}: #{ability["desc"]} \n"
+                # Save Ability: #{ability["dc"]["dc_type"]["name"]} \n
+                # DC: #{ability["dc"]["dc_value"]}\n"
             elsif !ability["dc"] && ability["usage"] && !ability["damage"]
                 "#{ability["name"]} (#{ability_usage(ability)}): #{ability["desc"]} \n"
             elsif ability["dc"] && ability["usage"] && !ability["damage"]
                 "#{ability["name"]}: #{ability["desc"]} \n
-                Save Ability: #{ability["dc"]["dc_type"]["name"]} \n
-                DC: #{ability["dc"]["dc_value"]} \n
-                Usage: #{ability_usage(ability)}"
+                Usage: #{ability_usage(ability)}\n"
+                # Save Ability: #{ability["dc"]["dc_type"]["name"]} \n
+                # DC: #{ability["dc"]["dc_value"]} \n
             elsif ability["dc"] && ability["usage"] && ability["damage"]
                 "#{ability["name"]}: #{ability["desc"]} \n
-                Save Ability: #{ability["dc"]["dc_type"]["name"]} \n
-                DC: #{ability["dc"]["dc_value"]} \n
                 Usage: #{ability_usage(ability)} \n
-                Damage: #{ability["damage"].map{|damage| "#{damage["damage_dice"]} +#{damage["damage_bonus"]} #{damage["damage_type"]["name"]} Damage"} }"
-            else "#{ability["name"]}: #{ability["desc"]}"
+                Damage: #{ability["damage"].map{|damage| "#{damage["damage_dice"]} +#{damage["damage_bonus"]} #{damage["damage_type"]["name"]} Damage"} }\n"
+                # Save Ability: #{ability["dc"]["dc_type"]["name"]} \n
+                # DC: #{ability["dc"]["dc_value"]} \n
+            else "#{ability["name"]}: #{ability["desc"]}\n"
             end
         end 
-        special
     end
     # -----------------------------------------------------------------------------------------
     def menu_spells
