@@ -4,16 +4,16 @@ class Cli
     attr_reader :list
 
     def initialize
-        puts "Welcome to the Dnd 5th Edition Spellbook!"
+        puts "~~ Welcome to the Dnd 5th Edition Infobook! ~~".colorize(:cyan)
         @list = {monsters: [], spells: []}
         main_menu
     end
 
     def main_menu
         puts "Would you like to load Monsterbook or Spellbook?"
-        puts "Input 'Monsters' or 'Spells'"
+        puts "Input " +'Monsters'.colorize(:green) + " or " + 'Spells'.colorize(:green)
         input = gets.strip
-        if input.downcase == "monsters"
+        if input.downcase == "monsters" || input.downcase == "monster"
         puts "Loading Monsters list, it may take a few minutes"
             if Monsters.all == []
                 Monsters.new
@@ -24,7 +24,7 @@ class Cli
             puts "Thanks for waiting!"
             puts"-------------------"
             menu_monsters
-        elsif input.downcase == 'spells'
+        elsif input.downcase == 'spells' || input.downcase == 'spell'
             puts "Loading Spell list, it may take a few minutes"
             if Spells.all == []
             Spells.new
@@ -41,6 +41,7 @@ class Cli
         
     end
     # -----------------------------------------------------------------------------------------
+
 
     def menu_monsters
         puts ''
@@ -75,9 +76,9 @@ class Cli
         elsif input.downcase == 'random'
             random_monster
         elsif input.downcase == 'by group'
-            by_group
+            mon_by_group
         elsif input.downcase == "clear"
-            clear
+            mon_clear
         elsif input.downcase =="exit"
             goodbye
         else
@@ -87,10 +88,13 @@ class Cli
         end
     end 
 
-    def monster_by_name(name)
-        mon = SingleMonster.new(name)
-        display_mon(mon)
+    def mon_clear
+        system("clear")
         menu_monsters
+    end
+    def monster_by_name(name)
+        mon = SingleMonster.new(name) 
+        display_mon(mon)
     end
 
     def random_monster
@@ -102,7 +106,7 @@ class Cli
 
     def list_mons
         array =[]
-        @list["monsters"].each.with_index(1) do |mon, index| array << "#{index}. #{mon["name"]}" end
+        @list[:monsters].each.with_index(1) do |mon, index| array << "#{index}. #{mon["name"]}" end
         puts array
         menu_monsters
     end
@@ -152,6 +156,12 @@ class Cli
         puts "Actions:"
         puts actions(mon)
 
+        if mon.reactions
+            puts ''
+            puts "Reactions: "
+            puts "#{mon.reactions.map{|action| "#{action["name"]}: #{action["desc"]} \n"}.join("\n")}
+            "
+        end
         if mon.legendary_actions
             puts ''
             puts "Legendary Actions: "
@@ -182,26 +192,142 @@ class Cli
     def special_abilities(mon)
         special = mon.special_abilities.map do |ability| 
             if ability["dc"] && !ability["usage"] && !ability["damage"]
-                "#{ability["name"]}: #{ability["desc"]} \n"
-                # Save Ability: #{ability["dc"]["dc_type"]["name"]} \n
-                # DC: #{ability["dc"]["dc_value"]}\n"
+                "#{ability["name"]}: #{ability["desc"]}
+                "
             elsif !ability["dc"] && ability["usage"] && !ability["damage"]
                 "#{ability["name"]} (#{ability_usage(ability)}): #{ability["desc"]} \n"
             elsif ability["dc"] && ability["usage"] && !ability["damage"]
                 "#{ability["name"]}: #{ability["desc"]} \n
-                Usage: #{ability_usage(ability)}\n"
-                # Save Ability: #{ability["dc"]["dc_type"]["name"]} \n
-                # DC: #{ability["dc"]["dc_value"]} \n
+                Usage: #{ability_usage(ability)}
+                "
             elsif ability["dc"] && ability["usage"] && ability["damage"]
                 "#{ability["name"]}: #{ability["desc"]} \n
                 Usage: #{ability_usage(ability)} \n
-                Damage: #{ability["damage"].map{|damage| "#{damage["damage_dice"]} +#{damage["damage_bonus"]} #{damage["damage_type"]["name"]} Damage"} }\n"
-                # Save Ability: #{ability["dc"]["dc_type"]["name"]} \n
-                # DC: #{ability["dc"]["dc_value"]} \n
-            else "#{ability["name"]}: #{ability["desc"]}\n"
+                Damage: #{ability["damage"].map{|damage| "#{damage["damage_dice"]} +#{damage["damage_bonus"]} #{damage["damage_type"]["name"]} Damage"} }
+                "
+            else "#{ability["name"]}: #{ability["desc"]}
+                "
             end
         end 
     end
+
+    def mon_by_group
+        group = GroupMonsters.new
+        puts "Would you like to select via:"
+        puts "Combat rating, Type, or Size?"
+        puts "Type 'CR', 'Type', or 'Size'"
+        puts ''
+        input = gets.strip
+        if input.downcase == "cr"
+            by_cr(group)
+        elsif input.downcase == 'type'
+            by_type(group)
+        elsif input.downcase == 'size'
+            by_size(group)
+        else 
+            puts "Sorry thats not an option!"
+        end 
+        menu_monsters
+    end
+
+    def display_mon_name(mon)
+        mon.name
+    end
+
+    def by_cr(group)
+        puts "Input number between 0 & 30, or Input '1/2', '1/4' or '1/8'"
+        input = gets.strip
+        if input.to_f <= 30 && input.to_f >= 0
+            ls=  group.find_by_cr(input)
+            if ls == []
+                puts"Sorry, no monsters of that CR exist"
+                by_cr(group)
+            else
+            mon_group = group.mons_by_collection(ls)
+            puts ''
+            display_mon_list(mon_group)
+            end
+        else puts "Sorry that level doesnt exist"
+            by_cr(group)
+        end
+    end
+
+    def by_type(group)
+        puts "Input the type of Monsters you want to view, or 'List' to see the options"
+        input = gets.strip
+        if input.downcase !="list" && group.find_by_type(input) !=[]
+            ls = group.find_by_type(input)
+            mon_group = group.mons_by_collection(ls)
+            display_mon_list(mon_group)
+            puts''
+        elsif input.downcase == "list"
+            display_options_type
+            by_type(group)
+        else puts 'Sorry that Type doesnt exist'
+            by_type(group)
+        end
+    end
+    def by_size(group)
+        puts "Input the size of Monsters you want to view, or 'List' to see the options"
+        input = gets.strip
+        if input.downcase == "list"
+            display_options_size
+            by_size(group)
+        elsif input.downcase !="list" && group.find_by_size(input) !=[]
+            ls = group.find_by_size(input)
+            mon_group = group.mons_by_collection(ls)
+            display_mon_list(mon_group)
+            puts''
+        else puts 'Sorry that size doesnt exist'
+            by_size(group)
+        end
+    end
+   
+    def display_options_type
+        type_options =[]
+        @list[:monsters].each do |monster| type_options << monster["type"] end
+        type_options.uniq!
+        type_options.each{|type| puts type }
+    end
+
+    def display_options_size
+        type_options =[]
+        @list[:monsters].each do |monster| type_options << monster["size"] end
+        type_options.uniq!
+        type_options.each{|type| puts type }
+    end
+
+    def display_mon_list(mon_group)
+        puts "Would you like to see just the Names, or the full information for the Monster list?"
+        puts "Type 'List' for just the names, 'Full' for full information," 
+        puts "'Monster' to choose an individual Monster, or 'Menu' to return to the Monster Menu"
+        input = gets.strip
+            if input.downcase == 'list'
+                mon_group.each.with_index(1) {|mon, index| puts "#{index}. #{display_mon_name(mon)}"}
+                display_mon_list(mon_group)
+                puts''
+            elsif input.downcase == 'full'
+                mon_group.each {|mon| display_mon(mon)}
+                display_mon_list(mon_group)
+                puts ''
+            elsif input.downcase == 'monster'
+                puts "Please input monster name"
+                input = gets.strip
+                if @list[:monsters].any?{|monster| monster["name"] == input}
+                    monster_by_name(input)
+                    puts ''
+                    display_mon_list(mon_group)
+                else puts "Sorry, no monster of that name"
+                    display_mon_list(mon_group)
+                end
+            elsif input.downcase == 'menu'
+                menu_monsters
+            else puts "Sorry thats not an option!"
+                puts ""
+                display_mon_list(mon_group)
+            end
+    end
+
     # -----------------------------------------------------------------------------------------
     def menu_spells
         puts ''
@@ -332,7 +458,6 @@ class Cli
         class_options.each{|klass| puts klass }
         
     end
-    :spells
 
     def display_options_schools
         school_options =[]
@@ -432,3 +557,7 @@ class Cli
     end
 
 end
+
+
+                # Save Ability: #{ability["dc"]["dc_type"]["name"]} \n
+                # DC: #{ability["dc"]["dc_value"]}\n"

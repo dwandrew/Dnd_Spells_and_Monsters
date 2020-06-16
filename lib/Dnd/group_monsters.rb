@@ -6,44 +6,42 @@ class GroupMonsters
     def initialize
        @list = Monsters.all
     end
+
+    def mons_by_collection(collection)
+        group = []
+        collection.each do |mon| group << SingleMonster.new(mon["name"]) end
+        group
+    end
  
      def find_by_type(type)
          selection = []
          @list.each do 
-             |mons| selection << mon if mon["type"] == type
+             |mon| selection << mon if mon["type"] == type
          end
          selection
      end
- 
+
+     def find_by_size(size)
+        selection = []
+        @list.each do 
+            |mon| selection << mon if mon["size"] == size
+        end
+        selection
+    end
+
      def find_by_cr(cr)
+        if cr == "1/8"
+        cr = 0.125
+        elsif cr == "1/4"
+        cr = 0.25
+        elsif cr =="1/2"
+        cr = 0.5
+        end
          selection = []
          @list.each do 
              |mon| selection << mon if mon["challenge_rating"] == cr.to_f
          end
          selection
      end
- 
-     def find_by_ritual
-         selection = []
-         @list.each do 
-             |spell| selection << spell if spell["ritual"]
-         end
-         selection
-     end
- 
-     def find_by_class(klass)
-         selection = []
-         @list.each do 
-             |spell| spell["classes"].each do |k| selection << spell if k["name"] == klass
-             end
-         end
-         selection
-     end
- 
-     def spell_by_name(name)
-         spell = SingleSpell.new(name)
-         puts display_spell(spell)
-     end
- 
 
 end
