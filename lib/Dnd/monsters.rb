@@ -19,12 +19,12 @@ class Monsters
 
     def self.index_list
     array =[]
-    @@all.each_with_index do |mon, index| array<< "#{index+1}. #{mon["name"]}" end
+    @@all.each.with_index(1) do |mon, index| array<< "#{index}. #{mon["name"]}" end
     array
     end
     
     def self.all
-        @@all
+        @@alls
     end
 
     def save

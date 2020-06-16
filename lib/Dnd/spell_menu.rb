@@ -221,7 +221,6 @@ class SpellMenu
         puts ''
     end
 
-    # ----------------------------------------------------------------
     def clear
         system("clear")
         menu_spells

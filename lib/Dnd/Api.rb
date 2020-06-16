@@ -27,6 +27,8 @@ def self.get_monsters
     JSON(body)
 end
 
+#d
+
 def self.get_monster_url(url)
     url = url.gsub("/api/monsters/", "")
     uri = URI.parse("#{@@url}/monsters/#{url}")
