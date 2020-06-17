@@ -24,7 +24,7 @@ class Monsters
     end
     
     def self.all
-        @@alls
+        @@all
     end
 
     def save
