@@ -218,6 +218,8 @@ class SpellMenu
         if spell.higher_level
         puts "Higher Level: ".colorize(:cyan) + "#{spell.higher_level[0]}"
         end
+        puts ""
+        puts "------   ------   ------".colorize(:yellow)
         puts ''
     end
 

@@ -124,14 +124,18 @@ class MonsterMenu
         if mon.reactions
             puts ''
             puts "Reactions: ".colorize(:cyan)
-            puts "#{mon.reactions.map{|action| "#{action["name"]}: #{action["desc"]} \n"}.join("\n")}
+            puts "#{mon.reactions.map{|action| "#{action["name"].colorize(:light_blue)}: #{action["desc"]} \n"}.join("\n")}
             "
         end
         if mon.legendary_actions
             puts ''
             puts "Legendary Actions: ".colorize(:cyan)
-            puts "#{mon.legendary_actions.map{|action| "#{action["name"]}: #{action["desc"]} \n"}.join("\n") }"
+            puts "#{mon.legendary_actions.map{|action| "#{action["name"]}: #{action["desc"]} \n"}.join("\n") }
+            "
         end
+        
+        puts "------   ------   ------".colorize(:yellow)
+        puts ""
     end
 
     def ability_usage(ability)

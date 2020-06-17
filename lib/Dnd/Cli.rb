@@ -11,12 +11,12 @@ class Cli
     end
 
     def main_menu
-        puts "Would you like to load Monsterbook, Spellbook or Exit?"
-        puts "Input " +'Monsters'.colorize(:green) + ", " + 'Spells'.colorize(:green) +" or " + "Exit".colorize(:red)
+        puts "Would you like to load Monsterbook, Spellbook, Both(comes with longer load time), or Exit?"
+        puts "Input " +'Monsters'.colorize(:green) + ", " + 'Spells'.colorize(:green) +", " + 'Both'.colorize(:yellow) + " or " + "Exit".colorize(:red)
         input = gets.strip
         if input.downcase == "monsters" || input.downcase == "monster"
-        puts "Loading Monsters list, it may take a few minutes"
             if Monsters.all == []
+                puts "Loading Monsters list, it may take a few minutes"
                 Monsters.new
                 @list[:monsters] = Monsters.all
                 else
@@ -27,9 +27,33 @@ class Cli
             puts"-------------------"
             # menu_monsters
             MonsterMenu.new
-        elsif input.downcase == 'spells' || input.downcase == 'spell'
-            puts "Loading Spell list, it may take a few minutes"
+        elsif input.downcase == "both"
             if Spells.all == []
+                puts "Loading Spell list, it may take a few minutes"
+                Spells.new
+                @list[:spells] = Spells.all
+                puts"-------------------"
+                puts" Loaded Spell list "
+                puts"Thanks for waiting!"
+                puts"-------------------"
+                else
+                @list[:spells] = Spells.all
+            end
+            if Monsters.all == []
+                puts "Loading Monsters list, it may take a few minutes"
+                Monsters.new
+                @list[:monsters] = Monsters.all
+                puts"-------------------"
+                puts"Loaded Monster list"
+                puts"Thanks for waiting!"
+                puts"-------------------"
+                else
+                @list[:monsters] = Monsters.all
+            end
+            main_menu
+        elsif input.downcase == 'spells' || input.downcase == 'spell'
+            if Spells.all == []
+            puts "Loading Spell list, it may take a few minutes"
             Spells.new
             @list[:spells] = Spells.all
             else
