@@ -92,26 +92,25 @@ class MonsterMenu
             puts "Other speeds: ".colorize(:cyan) + "#{mon.other_speeds}"
         end
         puts 'Ability Scores:'.colorize(:cyan)
-        puts "  Str: ".colorize(:yellow)+ "#{mon.strength}"
-        puts "  Dex: ".colorize(:yellow) + "#{mon.dexterity}"
-        puts "  Con: ".colorize(:yellow) +  "#{mon.constitution}"
-        puts "  Int: ".colorize(:yellow) + "#{mon.intelligence}"
-        puts "  Wis: ".colorize(:yellow) +  "#{mon.wisdom}"
-        puts "  Cha: ".colorize(:yellow) + "#{mon.charisma}"
+        puts "  Str: ".colorize(:yellow)+ "#{mon.strength}" +" (#{abilty_score_mod(mon.strength)})"
+        puts "  Dex: ".colorize(:yellow) + "#{mon.dexterity}"+" (#{abilty_score_mod(mon.dexterity)})"
+        puts "  Con: ".colorize(:yellow) +  "#{mon.constitution}"+" (#{abilty_score_mod(mon.constitution)})"
+        puts "  Int: ".colorize(:yellow) + "#{mon.intelligence}"+" (#{abilty_score_mod(mon.intelligence)})"
+        puts "  Wis: ".colorize(:yellow) +  "#{mon.wisdom}"+" (#{abilty_score_mod(mon.wisdom)})"
+        puts "  Cha: ".colorize(:yellow) + "#{mon.charisma}"+" (#{abilty_score_mod(mon.charisma)})"
         puts "" 
+        if mon.proficiencies!=[]
         puts "Proficiencies: ".colorize(:cyan) 
-        puts "#{mon.proficiencies.map{|save| "#{save["name"]}: +#{save["value"]}"}.join("\n")}"
-        puts ""
-        puts "Damage and Condition Modifiers".colorize(:cyan)
-        puts "Damage Resistances: ".colorize(:light_red) + "#{mon.damage_resistances.join(", ")}"
-        puts "Damage Vulnerabilities: ".colorize(:light_red) + "#{mon.damage_vulnerabilities.join(", ")}"
-        puts "Damage Immunities: ".colorize(:light_red) + "#{mon.damage_immunities.join(", ")}"
-        puts "Condition Immunities: ".colorize(:light_red) + "#{mon.condition_immunities.map{|value| value["name"]}.join(", ")}"
+        puts "#{mon.proficiencies.map{|save| "#{save["name"]}: +#{save["value"]}"}.join("\n")}"  
+        end
+        damage_and_condition_modifiers(mon)
         puts ""
         puts "Senses: ".colorize(:cyan)
         puts "#{mon.senses.map{|k,v| "#{k}: #{v}"}.join("\n")}"
+        if mon.languages!=""
         puts "Languages: ".colorize(:cyan)
         puts "#{mon.languages}"
+        end
          if mon.special_abilities
             puts ''
             puts "Special Abilities: ".colorize(:cyan)
@@ -124,18 +123,46 @@ class MonsterMenu
         if mon.reactions
             puts ''
             puts "Reactions: ".colorize(:cyan)
-            puts "#{mon.reactions.map{|action| "#{action["name"].colorize(:light_blue)}: #{action["desc"]} \n"}.join("\n")}
+            puts "#{mon.reactions.map{|action| "#{action["name"]}".colorize(:light_blue)+": #{action["desc"]} \n"}.join("\n")}
             "
         end
         if mon.legendary_actions
             puts ''
             puts "Legendary Actions: ".colorize(:cyan)
-            puts "#{mon.legendary_actions.map{|action| "#{action["name"]}: #{action["desc"]} \n"}.join("\n") }
+            puts "#{mon.legendary_actions.map{|action| "#{action["name"]}:".colorize(:light_blue)+" #{action["desc"]} \n"}.join("\n") }
             "
         end
         
         puts "------   ------   ------".colorize(:yellow)
         puts ""
+    end
+    
+    def abilty_score_mod(score)
+        score-=10
+        score/=2
+        if score >=0
+            "+#{score}"
+        else 
+            "#{score}"
+        end
+    end
+
+    def damage_and_condition_modifiers(mon)
+        if mon.damage_resistances !=[] || mon.damage_vulnerabilities!=[] || mon.damage_immunities!=[] || mon.condition_immunities!=[]
+            puts "Damage and Condition Modifiers".colorize(:cyan)
+            if mon.damage_resistances !=[]
+            puts "Damage Resistances: ".colorize(:light_red) + "#{mon.damage_resistances.join(", ")}"
+            end
+            if mon.damage_vulnerabilities!=[]
+            puts "Damage Vulnerabilities: ".colorize(:light_red) + "#{mon.damage_vulnerabilities.join(", ")}"
+            end
+            if mon.damage_immunities!=[]
+            puts "Damage Immunities: ".colorize(:light_red) + "#{mon.damage_immunities.join(", ")}"
+            end
+            if mon.condition_immunities!=[]
+            puts "Condition Immunities: ".colorize(:light_red) + "#{mon.condition_immunities.map{|value| value["name"]}.join(", ")}"
+            end
+        end
     end
 
     def ability_usage(ability)
@@ -148,11 +175,11 @@ class MonsterMenu
     def actions(mon)
         actions = mon.actions.map do |action| 
             if action["usage"]
-            "#{action["name"]} (#{ability_usage(action)}): #{action["desc"]}
+            "#{action["name"]} (#{ability_usage(action)}):".colorize(:light_blue)+" #{action["desc"]}
             "
             
             else 
-            "#{action["name"]}: #{action["desc"]}
+            "#{action["name"]}".colorize(:light_blue)+": #{action["desc"]}
             "
             end
         end
@@ -161,20 +188,20 @@ class MonsterMenu
     def special_abilities(mon)
         special = mon.special_abilities.map do |ability| 
             if ability["dc"] && !ability["usage"] && !ability["damage"]
-                "#{ability["name"]}: #{ability["desc"]}
+                "#{ability["name"]}:".colorize(:light_blue)+" #{ability["desc"]}
                 "
             elsif !ability["dc"] && ability["usage"] && !ability["damage"]
-                "#{ability["name"]} (#{ability_usage(ability)}): #{ability["desc"]} \n"
+                "#{ability["name"]} (#{ability_usage(ability)}):".colorize(:light_blue)+" #{ability["desc"]} \n"
             elsif ability["dc"] && ability["usage"] && !ability["damage"]
-                "#{ability["name"]}: #{ability["desc"]} \n
+                "#{ability["name"]}:".colorize(:light_blue)+" #{ability["desc"]} \n
                 Usage: #{ability_usage(ability)}
                 "
             elsif ability["dc"] && ability["usage"] && ability["damage"]
-                "#{ability["name"]}: #{ability["desc"]} \n
+                "#{ability["name"]}:".colorize(:light_blue)+" #{ability["desc"]} \n
                 Usage: #{ability_usage(ability)} \n
                 Damage: #{ability["damage"].map{|damage| "#{damage["damage_dice"]} +#{damage["damage_bonus"]} #{damage["damage_type"]["name"]} Damage"} }
                 "
-            else "#{ability["name"]}: #{ability["desc"]}
+            else "#{ability["name"]}:".colorize(:light_blue)+" #{ability["desc"]}
                 "
             end
         end 
