@@ -1,7 +1,7 @@
 require_relative 'lib/Dnd/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "Dnd"
+  spec.name          = "DnD Spells and Monsters"
   spec.version       = Dnd::VERSION
   spec.authors       = ["dwandrew"]
   spec.email         = ["danwandrew@gmail.com"]
@@ -15,8 +15,8 @@ if spec.respond_to?(:metadata)
   spec.metadata["allowed_push_host"] = "TODO: Set to 'http://mygemserver.com'"
 
   spec.metadata["homepage_uri"] = spec.homepage
-  spec.metadata["source_code_uri"] = "https://github.com/dwandrew/Dnd.git"
-  spec.metadata["changelog_uri"] = "https://github.com/dwandrew/Dnd.git"
+  spec.metadata["source_code_uri"] = "https://github.com/dwandrew/Dnd_Spells_and_Monsters.git"
+  spec.metadata["changelog_uri"] = "https://github.com/dwandrew/Dnd_Spells_and_Monsters.git"
 else
     raise "RubyGems 2.0 or newer is required to protect against " \
       "public gem pushes."

@@ -1,6 +1,6 @@
 # Dnd
 
-Welcome to your Dnd! This Gem allows the user to easily access a full repository of Dungeons and Dragons 5th Edition Monsters and Spells, that are freely available to the public. 
+Welcome to your Dnd app! This Gem allows the user to easily access a full repository of Dungeons and Dragons 5th Edition Monsters and Spells, that are freely available to the public. 
 It presents them in an easy to read manner through a number of accessible menus. 
 
 ## Installation
