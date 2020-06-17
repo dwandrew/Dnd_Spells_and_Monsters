@@ -12,23 +12,11 @@ class GroupMonsters
         collection.each do |mon| group << SingleMonster.new(mon["name"]) end
         group
     end
- 
-     def find_by_type(type)
-         selection = []
-         @list.each do 
-             |mon| selection << mon if mon["type"] == type
-         end
-         selection
-     end
 
-     def find_by_size(size)
-        selection = []
-        @list.each do 
-            |mon| selection << mon if mon["size"] == size
-        end
-        selection
+    def find_by_attr(data, attr)
+        @list.select {|mon| mon if mon[attr] == data}
     end
-
+ 
      def find_by_cr(cr)
         if cr == "1/8"
         cr = 0.125
@@ -38,10 +26,9 @@ class GroupMonsters
         cr = 0.5
         end
          selection = []
-         @list.each do 
-             |mon| selection << mon if mon["challenge_rating"] == cr.to_f
-         end
+         @list.each do |mon| selection << mon if mon["challenge_rating"] == cr.to_f end
          selection
      end
+
 
 end

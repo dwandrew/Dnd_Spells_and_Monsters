@@ -117,9 +117,10 @@ class MonsterMenu
             puts special_abilities(mon)
         end
         puts ''
+        if mon.actions
         puts "Actions:".colorize(:cyan)
         puts actions(mon)
-
+        end
         if mon.reactions
             puts ''
             puts "Reactions: ".colorize(:cyan)
@@ -252,8 +253,8 @@ class MonsterMenu
         puts "Input the type of Monsters you want to view, or #{'List'.colorize(:green)} to see the options"
         input = gets.strip
         if input.downcase !="list" && group.find_by_type(input) !=[]
-            ls = group.find_by_type(input)
-            mon_group = group.mons_by_collection(ls)
+            type_list = group.find_by_attr(input, "type")
+            mon_group = group.mons_by_collection(type_list)
             display_mon_list(mon_group)
             puts''
         elsif input.downcase == "list"
@@ -270,8 +271,8 @@ class MonsterMenu
             display_options_size
             by_size(group)
         elsif input.downcase !="list" && group.find_by_size(input) !=[]
-            ls = group.find_by_size(input)
-            mon_group = group.mons_by_collection(ls)
+            size_list = group.find_by_attr(input, "size")
+            mon_group = group.mons_by_collection(size_list)
             display_mon_list(mon_group)
             puts''
         else puts 'Sorry that size doesnt exist'
