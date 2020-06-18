@@ -1,17 +1,6 @@
 require_relative '../environment.rb'
 
 class GroupMonsters
-    attr_reader :list
-
-    def initialize
-       @list = Monsters.all
-    end
-
-    # def mons_by_collection(collection)
-    #     group = []
-    #     collection.each do |mon| group << SingleMonster.new(mon["name"]) end
-    #     group
-    # end
 
     def find_by_type(data)
         Monsters.all_class.select {|mon| mon if mon.type == data}

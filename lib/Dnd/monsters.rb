@@ -35,5 +35,3 @@ class Monsters
     end
 
 end
-
-# binding.pry

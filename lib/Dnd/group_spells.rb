@@ -23,10 +23,4 @@ class GroupSpells
             
     end
 
-    def spell_by_name(name)
-        puts display_spell(Spells.all_class.detect {|spell| spell.name == name})
-    end
-
 end
-
-# binding.pry

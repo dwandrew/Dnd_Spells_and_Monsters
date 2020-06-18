@@ -1,6 +1,6 @@
 require_relative '../environment'
 
-class MonsterMenu
+class MonsterCli
 
     def initialize
         menu_monsters
@@ -10,7 +10,7 @@ class MonsterMenu
         puts ''
         puts "Welcome to the #{"Monsters Menu".colorize(:yellow)}"
         puts "Please choose from the following options:"
-        puts "If you want a list of Monsters type #{'List Mons'.colorize(:green)}"
+        puts "If you want a list of Monsters type #{'List'.colorize(:green)}"
         puts "If you want to choose a Monster and get its details, type #{'By Name'.colorize(:green)}"
         puts "If you want to get groups of Monsters by a selector, type #{'By Group'.colorize(:green)}"
         puts "If you want to see a random Monster, type #{'Random'.colorize(:green)}"
@@ -18,12 +18,12 @@ class MonsterMenu
         puts "If you want to return to the Main Menu, type #{'Main'.colorize(:magenta)}"
         puts "If you want to exit, type #{'exit'.colorize(:red)}"
         puts " "
-        gets_user_input_mons
+        gets_user_input
     end
 
-    def gets_user_input_mons
+    def gets_user_input
         input = gets.strip
-        if input.downcase == "list mons"
+        if input.downcase == "list"
             list_mons
         elsif input.downcase =='main'
             Cli.main.main_menu
@@ -210,7 +210,8 @@ class MonsterMenu
         group = GroupMonsters.new
         puts "Would you like to select via:"
         puts "#{"Combat rating".colorize(:green)}, #{"Type".colorize(:green)}, or #{"Size".colorize(:green)}?"
-        puts "Type #{'CR'.colorize(:green)}, #{'Type'.colorize(:green)}, or #{'Size'.colorize(:green)}"
+        puts "Type #{'CR'.colorize(:green)}, #{'Type'.colorize(:green)}, #{'Size'.colorize(:green)}"
+        puts "or type exit to #{'exit'.colorize(:red)}"
         puts ''
         input = gets.strip
         if input.downcase == "cr"
@@ -219,6 +220,8 @@ class MonsterMenu
             by_type(group)
         elsif input.downcase == 'size'
             by_size(group)
+        elsif input.downcase =="exit"
+            goodbye
         else 
             puts "Sorry thats not an option!"
         end 
@@ -230,7 +233,7 @@ class MonsterMenu
     end
 
     def by_cr(group)
-        puts "Input number between #{"0 & 30".colorize(:green)}, or Input #{'1/2'.colorize(:green)}, #{'1/4'.colorize(:green)} or #{'1/8'.colorize(:green)}"
+        puts "Input number between #{"0 & 30".colorize(:green)} or Input #{'1/2'.colorize(:green)}, #{'1/4'.colorize(:green)}, #{'1/8'.colorize(:green)} or #{'exit'.colorize(:red)}"
         input = gets.strip
         if input.to_f <= 30 && input.to_f >= 0
             mon_group = group.find_by_cr(input)
@@ -241,13 +244,15 @@ class MonsterMenu
             puts ''
             display_mon_list(mon_group)
             end
+        elsif input.downcase =="exit"
+            goodbye
         else puts "Sorry that level doesnt exist"
             by_cr(group)
         end
     end
 
     def by_type(group)
-        puts "Input the type of Monsters you want to view, or #{'List'.colorize(:green)} to see the options"
+        puts "Input the type of Monsters you want to view, #{'List'.colorize(:green)} to see the options or #{'exit'.colorize(:red)}"
         input = gets.strip
         if input.downcase !="list" && group.find_by_type(input) !=[]
             type_list = group.find_by_type(input)
@@ -256,13 +261,15 @@ class MonsterMenu
         elsif input.downcase == "list"
             display_options_type
             by_type(group)
+        elsif input.downcase =="exit"
+            goodbye
         else puts 'Sorry that Type doesnt exist'
             by_type(group)
         end
     end
 
     def by_size(group)
-        puts "Input the size of Monsters you want to view, or #{'List'.colorize(:green)} to see the options"
+        puts "Input the size of Monsters you want to view, #{'List'.colorize(:green)} to see the options or #{'exit'.colorize(:red)}"
         input = gets.strip
         if input.downcase == "list"
             display_options_size
@@ -271,6 +278,8 @@ class MonsterMenu
             size_list = group.find_by_size(input)
             display_mon_list(size_list)
              puts ''
+        elsif input.downcase =="exit"
+            goodbye
         else puts 'Sorry that size doesnt exist'
             by_size(group)
         end
@@ -287,7 +296,8 @@ class MonsterMenu
     def display_mon_list(mon_group)
         puts "Would you like to see just the Names, or the full information for the Monster list?"
         puts "Type #{'List'.colorize(:green)} for just the names, #{'Full'.colorize(:green)} for full information," 
-        puts "#{'Monster'.colorize(:green)} to choose an individual Monster, or #{'Menu'.colorize(:green)} to return to the Monster Menu"
+        puts "#{'Monster'.colorize(:green)} to choose an individual Monster, #{'Menu'.colorize(:green)} to return to the Monster Menu"
+        puts "or type exit to #{'exit'.colorize(:red)}"
         input = gets.strip
             if input.downcase == 'list'
                 mon_group.each.with_index(1){|mon, index| puts "#{index}. #{mon.name}"}
@@ -309,6 +319,8 @@ class MonsterMenu
                 end
             elsif input.downcase == 'menu'
                 menu_monsters
+            elsif input.downcase =="exit"
+                goodbye
             else puts "Sorry thats not an option!"
                 puts ""
                 display_mon_list(mon_group)

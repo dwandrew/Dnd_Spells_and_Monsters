@@ -1,7 +1,7 @@
 require_relative '../environment'
 
 
-class SpellMenu
+class SpellCli
 
     def initialize
         menu_spells
@@ -11,7 +11,7 @@ class SpellMenu
         puts ''
         puts "Welcome to the #{"Spells Menu".colorize(:yellow)}"
         puts "Please choose from the following options:"
-        puts "If you want a list of spells type #{'List Spells'.colorize(:green)}"
+        puts "If you want a list of spells type #{'List'.colorize(:green)}"
         puts "If you want to choose a spell and get its details, type #{'By Name'.colorize(:green)}"
         puts "If you want to get groups of spells by a selector, type #{'By Group'.colorize(:green)}"
         puts "If you want to see a random spell, type #{'Random'.colorize(:green)}"
@@ -19,12 +19,12 @@ class SpellMenu
         puts "If you want to return to the Main Menu, type #{'Main'.colorize(:magenta)}"
         puts "If you want to exit, type #{'exit'.colorize(:red)}"
         puts " "
-        gets_user_input_spell
+        gets_user_input
     end
 
-    def gets_user_input_spell
+    def gets_user_input
         input = gets.strip
-        if input.downcase == "list spells"
+        if input.downcase == "list"
             list_spells
         elsif input.downcase =='main'
             Cli.main.main_menu
@@ -52,8 +52,6 @@ class SpellMenu
         end
     end
         
-  
-
     def by_group
         group = GroupSpells.new
         puts "Would you like to select via:"
@@ -76,9 +74,9 @@ class SpellMenu
     end
 
     def by_klass(group)
-        puts "Please type #{'List'.colorize(:green)} for a list of options or input class:"
+        puts "Please type #{'List'.colorize(:green)} for a list of options, input class or #{'exit'.colorize(:red)}"
         input = gets.strip
-        if input.downcase != 'list' && group.find_by_class(input)
+        if input.downcase != 'list' && group.find_by_class(input) != []
             spell_list = group.find_by_class(input)
             display_list(spell_list)
             puts ''
@@ -86,15 +84,17 @@ class SpellMenu
             display_options_classes
             puts ''
             by_klass(group)
+        elsif input.downcase =="exit"
+            goodbye
         else puts "Sorry that class doesnt exist"
             by_klass(group)
         end
     end
 
     def by_school(group)
-        puts "Please type #{'List'.colorize(:green)} for a list of options or input school name:"
+        puts "Please type #{'List'.colorize(:green)} for a list of options, input school name or #{'exit'.colorize(:red)}"
         input = gets.strip
-        if input.downcase != 'list' && group.find_by_school(input)
+        if input.downcase != 'list' &&  Cli.main.list[:spells].any?{|spell| spell.school["name"] == input}
             spell_group= group.find_by_school(input)
             display_list(spell_group)
             puts ''
@@ -102,18 +102,22 @@ class SpellMenu
             display_options_schools
             puts ''
             by_school(group)
+        elsif input.downcase =="exit"
+            goodbye
         else puts "Sorry that school doesnt exist"
             by_school(group)
         end
     end
 
     def by_level(group)
-        puts "Input number between #{"1 & 9".colorize(:green)}, or Input #{'0'.colorize(:green)} for Cantrips"
+        puts "Input number between #{"1 & 9".colorize(:green)}, Input #{'0'.colorize(:green)} for Cantrips or #{'exit'.colorize(:red)}"
         input = gets.strip
         if input.to_i < 10 && input.to_i >= 0
             spell_group=  group.find_by_level(input.to_i)
             puts ''
             display_list(spell_group)
+        elsif input.downcase =="exit"
+            goodbye
         else puts "Sorry that level doesnt exist"
             by_level(group)
         end
@@ -128,23 +132,18 @@ class SpellMenu
     def display_options_classes 
         class_options =[]
         Cli.main.list[:spells].each do |spell| spell.classes.each do |klass| class_options << klass["name"] end end
-        class_options.uniq!
-        class_options.each{|klass| puts klass }
-        
+        class_options.uniq.each{|klass| puts klass }
     end
 
     def display_options_schools
-        school_options =[]
-        Cli.main.list[:spells].each do |spell| school_options << spell.school["name"] end
-        school_options.uniq!
-        school_options.each{|school| puts school}
-        
+        Cli.main.list[:spells].map{|spell| spell.school["name"]}.uniq.each{|school| puts school}
     end
 
     def display_list(spell_group)
         puts "Would you like to see just the Names, or the full information for the spell list?"
         puts "Type #{'List'.colorize(:green)} for just the names, #{'Full'.colorize(:green)} for full information," 
-        puts "#{'Spell'.colorize(:green)} to choose an individual spell, or #{'Menu'.colorize(:green)} to return to the Spells Menu"
+        puts "#{'Spell'.colorize(:green)} to choose an individual spell, #{'Menu'.colorize(:green)} to return to the Spells Menu"
+        puts "or type #{'exit'.colorize(:red)} to exit"
         input = gets.strip
             if input.downcase == 'list'
                 spell_group.each.with_index(1) {|spell, index| puts "#{index}. #{display_spell_name(spell)}"}
@@ -163,6 +162,8 @@ class SpellMenu
                 end
             elsif input.downcase == 'menu'
                 menu_spells
+            elsif input.downcase =="exit"
+                goodbye
             else puts "Sorry thats not an option!"
                 puts ""
                 display_list(spell_group)
