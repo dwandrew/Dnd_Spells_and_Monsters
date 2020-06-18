@@ -30,7 +30,7 @@ class MonsterMenu
         elsif input.downcase == "by name"
             puts "Type Monster name"
             input = gets.strip
-             if Cli.main.list[:monsters].any?{|monster| monster["name"] == input}
+             if Cli.main.list[:monsters].any?{|monster| monster.name == input}
                 monster_by_name(input)
                 menu_monsters
              else puts "Sorry, no monster of that name"
@@ -62,15 +62,13 @@ class MonsterMenu
 
     def random_monster
         r = Cli.main.list[:monsters].sample
-        mon = SingleMonster.new(r["name"])
-        display_mon(mon)
+        display_mon(r)
         menu_monsters
     end
 
     def list_mons
-        array =[]
-        Cli.main.list[:monsters].each.with_index(1) do |mon, index| array << "#{index}. #{mon["name"]}" end
-        puts array
+        list = Cli.main.list[:monsters].map.with_index(1) do |mon, index| "#{index}. #{mon.name}" end
+        puts list
         menu_monsters
     end
 
@@ -235,12 +233,11 @@ class MonsterMenu
         puts "Input number between #{"0 & 30".colorize(:green)}, or Input #{'1/2'.colorize(:green)}, #{'1/4'.colorize(:green)} or #{'1/8'.colorize(:green)}"
         input = gets.strip
         if input.to_f <= 30 && input.to_f >= 0
-            ls=  group.find_by_cr(input)
-            if ls == []
+            mon_groupb = group.find_by_cr(input)
+            if mon_group == []
                 puts"Sorry, no monsters of that CR exist"
                 by_cr(group)
             else
-            mon_group = group.mons_by_collection(ls)
             puts ''
             display_mon_list(mon_group)
             end
@@ -254,8 +251,7 @@ class MonsterMenu
         input = gets.strip
         if input.downcase !="list" && group.find_by_type(input) !=[]
             type_list = group.find_by_attr(input, "type")
-            mon_group = group.mons_by_collection(type_list)
-            display_mon_list(mon_group)
+            display_mon_list(type_list)
             puts''
         elsif input.downcase == "list"
             display_options_type
@@ -264,6 +260,7 @@ class MonsterMenu
             by_type(group)
         end
     end
+
     def by_size(group)
         puts "Input the size of Monsters you want to view, or #{'List'.colorize(:green)} to see the options"
         input = gets.strip
@@ -272,8 +269,7 @@ class MonsterMenu
             by_size(group)
         elsif input.downcase !="list" && group.find_by_size(input) !=[]
             size_list = group.find_by_attr(input, "size")
-            mon_group = group.mons_by_collection(size_list)
-            display_mon_list(mon_group)
+            display_mon_list(size_list
             puts''
         else puts 'Sorry that size doesnt exist'
             by_size(group)
@@ -281,17 +277,11 @@ class MonsterMenu
     end
    
     def display_options_type
-        type_options =[]
-        Cli.main.list[:monsters].each do |monster| type_options << monster["type"] end
-        type_options.uniq!
-        type_options.each{|type| puts type }
+        Cli.main.list[:monsters].map { |monster| monster.type }.uniq.each{|type| puts type }
     end
 
     def display_options_size
-        type_options =[]
-        Cli.main.list[:monsters].each do |monster| type_options << monster["size"] end
-        type_options.uniq!
-        type_options.each{|type| puts type }
+        Cli.main.list[:monsters].map {|monster| type_options << monster.size}.uniq.each{|size| puts size }
     end
 
     def display_mon_list(mon_group)

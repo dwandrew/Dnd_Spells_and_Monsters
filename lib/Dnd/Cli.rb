@@ -28,16 +28,16 @@ class Cli
             # menu_monsters
             MonsterMenu.new
         elsif input.downcase == "both"
-            if Spells.all == []
+            if Spells.all_class == []
                 puts "Loading Spell list, it may take a few minutes"
                 Spells.new
-                @list[:spells] = Spells.all
+                @list[:spells] = Spells.all_class
                 puts"-------------------"
                 puts" Loaded Spell list "
                 puts"Thanks for waiting!"
                 puts"-------------------"
                 else
-                @list[:spells] = Spells.all
+                @list[:spells] = Spells.all_class
             end
             if Monsters.all == []
                 puts "Loading Monsters list, it may take a few minutes"
@@ -52,12 +52,12 @@ class Cli
             end
             main_menu
         elsif input.downcase == 'spells' || input.downcase == 'spell'
-            if Spells.all == []
+            if Spells.all_class == []
             puts "Loading Spell list, it may take a few minutes"
             Spells.new
-            @list[:spells] = Spells.all
+            @list[:spells] = Spells.all_class
             else
-            @list[:spells] = Spells.all
+            @list[:spells] = Spells.all_class
             end
             puts"-------------------"
             puts "Thanks for waiting!"

@@ -31,7 +31,7 @@ class SpellMenu
         elsif input.downcase == "by name"
             puts "Type Spell name"
             input = gets.strip
-             if Cli.main.list[:spells].any?{|spell| spell["name"] == input}
+             if Cli.main.list[:spells].any?{|spell| spell.name == input}
                 spell_by_name(input)
                 menu_spells
              else puts "Sorry, no spell of that name"
@@ -79,9 +79,8 @@ class SpellMenu
         puts "Please type #{'List'.colorize(:green)} for a list of options or input class:"
         input = gets.strip
         if input.downcase != 'list' && group.find_by_class(input)
-            ls = group.find_by_class(input)
-            spell_group= group.spells_by_collection(ls)
-            display_list(spell_group)
+            spell_list = group.find_by_class(input)
+            display_list(spell_list)
             puts ''
         elsif input.downcase == 'list'
             display_options_classes
@@ -96,8 +95,7 @@ class SpellMenu
         puts "Please type #{'List'.colorize(:green)} for a list of options or input school name:"
         input = gets.strip
         if input.downcase != 'list' && group.find_by_school(input)
-            ls= group.find_by_school(input)
-            spell_group =  group.spells_by_collection(ls)
+            spell_group= group.find_by_school(input)
             display_list(spell_group)
             puts ''
         elsif input.downcase == 'list'
@@ -113,8 +111,7 @@ class SpellMenu
         puts "Input number between #{"1 & 9".colorize(:green)}, or Input #{'0'.colorize(:green)} for Cantrips"
         input = gets.strip
         if input.to_i < 10 && input.to_i >= 0
-            ls=  group.find_by_level(input.to_i)
-            spell_group = group.spells_by_collection(ls)
+            spell_group=  group.find_by_level(input.to_i)
             puts ''
             display_list(spell_group)
         else puts "Sorry that level doesnt exist"
@@ -123,15 +120,14 @@ class SpellMenu
     end
 
     def by_ritual(group)
-            ls= group.find_by_ritual
-            spell_group = group.spells_by_collection(ls)
+            spell_group= group.find_by_ritual
             display_list(spell_group)
             puts ''
     end
 
     def display_options_classes 
         class_options =[]
-        Cli.main.list[:spells].each do |spell| spell["classes"].each do |klass| class_options << klass["name"] end end
+        Cli.main.list[:spells].each do |spell| spell.classes.each do |klass| class_options << klass["name"] end end
         class_options.uniq!
         class_options.each{|klass| puts klass }
         
@@ -139,7 +135,7 @@ class SpellMenu
 
     def display_options_schools
         school_options =[]
-        Cli.main.list[:spells].each do |spell| school_options << spell["school"]["name"] end
+        Cli.main.list[:spells].each do |spell| school_options << spell.school["name"] end
         school_options.uniq!
         school_options.each{|school| puts school}
         
@@ -159,10 +155,10 @@ class SpellMenu
             elsif input.downcase == 'spell'
                 puts "Please input spell name"
                 input = gets.strip
-                if spell_by_name(input)
+                if  Cli.main.list[:spells].any?{|spell| spell.name == input}
                     spell_by_name(input)
                     display_list(spell_group)
-                else "Sorry thats not an option!"
+                else puts "Sorry thats not an option!"
                     display_list(spell_group)
                 end
             elsif input.downcase == 'menu'
@@ -177,22 +173,19 @@ class SpellMenu
 
     def random_spell
         r = Cli.main.list[:spells].sample
-        spell = SingleSpell.new(r["name"])
-        display_spell(spell)
+        display_spell(r)
         menu_spells
     end
     
     
     def list_spells
-        array =[]
-        Cli.main.list[:spells].each.with_index(1) do |spell, index| array << "#{index}. #{spell["name"]}" end
-        puts array
+        list  = Cli.main.list[:spells].map.with_index(1) do |spell, index| "#{index}. #{spell.name}" end
+        puts list
         menu_spells
     end
 
     def spell_by_name(name)
-        spell = SingleSpell.new(name)
-        display_spell(spell)
+        display_spell(Spells.all_class.detect {|spell| spell.name == name})
     end
 
     def display_spell_name(spell)

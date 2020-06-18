@@ -7,14 +7,14 @@ class GroupMonsters
        @list = Monsters.all
     end
 
-    def mons_by_collection(collection)
-        group = []
-        collection.each do |mon| group << SingleMonster.new(mon["name"]) end
-        group
-    end
+    # def mons_by_collection(collection)
+    #     group = []
+    #     collection.each do |mon| group << SingleMonster.new(mon["name"]) end
+    #     group
+    # end
 
     def find_by_attr(data, attr)
-        @list.select {|mon| mon if mon[attr] == data}
+        Monsters.all_class.select {|mon| mon if mon[attr] == data}
     end
  
      def find_by_cr(cr)
@@ -25,9 +25,7 @@ class GroupMonsters
         elsif cr =="1/2"
         cr = 0.5
         end
-         selection = []
-         @list.each do |mon| selection << mon if mon["challenge_rating"] == cr.to_f end
-         selection
+         Monsters.all_class.map do |mon|  mon if mon.challenge_rating == cr.to_f end
      end
 
 
