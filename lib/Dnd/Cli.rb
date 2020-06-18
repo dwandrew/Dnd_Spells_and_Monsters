@@ -15,12 +15,12 @@ class Cli
         puts "Input " +'Monsters'.colorize(:green) + ", " + 'Spells'.colorize(:green) +", " + 'Both'.colorize(:yellow) + " or " + "Exit".colorize(:red)
         input = gets.strip
         if input.downcase == "monsters" || input.downcase == "monster"
-            if Monsters.all == []
+            if Monsters.all_class == []
                 puts "Loading Monsters list, it may take a few minutes"
                 Monsters.new
-                @list[:monsters] = Monsters.all
+                @list[:monsters] = Monsters.all_class
                 else
-                @list[:monsters] = Monsters.all
+                @list[:monsters] = Monsters.all_class
             end
             puts"-------------------"
             puts "Thanks for waiting!"
@@ -39,16 +39,16 @@ class Cli
                 else
                 @list[:spells] = Spells.all_class
             end
-            if Monsters.all == []
+            if Monsters.all_class == []
                 puts "Loading Monsters list, it may take a few minutes"
                 Monsters.new
-                @list[:monsters] = Monsters.all
+                @list[:monsters] = Monsters.all_class
                 puts"-------------------"
                 puts"Loaded Monster list"
                 puts"Thanks for waiting!"
                 puts"-------------------"
                 else
-                @list[:monsters] = Monsters.all
+                @list[:monsters] = Monsters.all_class
             end
             main_menu
         elsif input.downcase == 'spells' || input.downcase == 'spell'

@@ -56,7 +56,7 @@ class MonsterMenu
         menu_monsters
     end
     def monster_by_name(name)
-        mon = SingleMonster.new(name) 
+        mon = Cli.main.list[:monsters].detect{|mon| mon.name == name}
         display_mon(mon)
     end
 
@@ -233,7 +233,7 @@ class MonsterMenu
         puts "Input number between #{"0 & 30".colorize(:green)}, or Input #{'1/2'.colorize(:green)}, #{'1/4'.colorize(:green)} or #{'1/8'.colorize(:green)}"
         input = gets.strip
         if input.to_f <= 30 && input.to_f >= 0
-            mon_groupb = group.find_by_cr(input)
+            mon_group = group.find_by_cr(input)
             if mon_group == []
                 puts"Sorry, no monsters of that CR exist"
                 by_cr(group)
@@ -250,7 +250,7 @@ class MonsterMenu
         puts "Input the type of Monsters you want to view, or #{'List'.colorize(:green)} to see the options"
         input = gets.strip
         if input.downcase !="list" && group.find_by_type(input) !=[]
-            type_list = group.find_by_attr(input, "type")
+            type_list = group.find_by_type(input)
             display_mon_list(type_list)
             puts''
         elsif input.downcase == "list"
@@ -268,9 +268,9 @@ class MonsterMenu
             display_options_size
             by_size(group)
         elsif input.downcase !="list" && group.find_by_size(input) !=[]
-            size_list = group.find_by_attr(input, "size")
-            display_mon_list(size_list
-            puts''
+            size_list = group.find_by_size(input)
+            display_mon_list(size_list)
+             puts ''
         else puts 'Sorry that size doesnt exist'
             by_size(group)
         end
@@ -281,7 +281,7 @@ class MonsterMenu
     end
 
     def display_options_size
-        Cli.main.list[:monsters].map {|monster| type_options << monster.size}.uniq.each{|size| puts size }
+        Cli.main.list[:monsters].map {|monster| monster.size}.uniq.each{|size| puts size }
     end
 
     def display_mon_list(mon_group)
@@ -290,7 +290,7 @@ class MonsterMenu
         puts "#{'Monster'.colorize(:green)} to choose an individual Monster, or #{'Menu'.colorize(:green)} to return to the Monster Menu"
         input = gets.strip
             if input.downcase == 'list'
-                mon_group.each.with_index(1) {|mon, index| puts "#{index}. #{display_mon_name(mon)}"}
+                mon_group.each.with_index(1){|mon, index| puts "#{index}. #{mon.name}"}
                 display_mon_list(mon_group)
                 puts''
             elsif input.downcase == 'full'
@@ -300,7 +300,7 @@ class MonsterMenu
             elsif input.downcase == 'monster'
                 puts "Please input monster name"
                 input = gets.strip
-                if Cli.main.list[:monsters].any?{|monster| monster["name"] == input}
+                if Cli.main.list[:monsters].any?{|monster| monster.name == input}
                     monster_by_name(input)
                     puts ''
                     display_mon_list(mon_group)

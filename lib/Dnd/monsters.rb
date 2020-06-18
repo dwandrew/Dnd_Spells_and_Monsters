@@ -13,7 +13,7 @@ class Monsters
         full_index
         full_index_class
     end
-    
+
     def full_index
         @list.each{|mon| @@all << API.get_monster_url(mon['url'])}
     end
@@ -36,4 +36,4 @@ class Monsters
 
 end
 
-binding.pry
+# binding.pry

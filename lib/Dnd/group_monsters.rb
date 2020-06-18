@@ -13,8 +13,12 @@ class GroupMonsters
     #     group
     # end
 
-    def find_by_attr(data, attr)
-        Monsters.all_class.select {|mon| mon if mon[attr] == data}
+    def find_by_type(data)
+        Monsters.all_class.select {|mon| mon if mon.type == data}
+    end
+
+    def find_by_size(data)
+        Monsters.all_class.select {|mon| mon if mon.size == data}
     end
  
      def find_by_cr(cr)
@@ -25,7 +29,7 @@ class GroupMonsters
         elsif cr =="1/2"
         cr = 0.5
         end
-         Monsters.all_class.map do |mon|  mon if mon.challenge_rating == cr.to_f end
+         Monsters.all_class.select {|mon| mon.challenge_rating == cr.to_f}
      end
 
 
