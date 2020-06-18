@@ -13,8 +13,8 @@ require_relative './Dnd/group_spells.rb'
 require_relative './Dnd/monsters.rb'
 require_relative './Dnd/single_monster.rb'
 require_relative './Dnd/group_monsters.rb'
-require_relative './Dnd/monster_menu.rb'
-require_relative './Dnd/spell_menu.rb'
+require_relative './Dnd/monster_cli.rb'
+require_relative './Dnd/spell_cli.rb'
 
 
 
