@@ -29,12 +29,12 @@ class MonsterCli
         if input.downcase == "list"
             list_mons
         elsif input.downcase =='main'
-            Cli.main.main_menu
+            Cli.new
         elsif input.downcase == "by name"
             puts "Type Monster name"
             input = gets.strip
 
-             if Cli.main.list[:monsters].any?{|monster| monster.name == input}
+             if Monsters.all_class.any?{|monster| monster.name == input}
                 monster_by_name(input)
                 menu_monsters
              else puts "Sorry, no monster of that name"
@@ -62,18 +62,18 @@ class MonsterCli
     end
 
     def monster_by_name(name)
-        mon = Cli.main.list[:monsters].detect{|mon| mon.name == name}
+        mon = Monsters.all_class.detect{|mon| mon.name == name}
         display_mon(mon)
     end
 
     def random_monster
-        r = Cli.main.list[:monsters].sample
+        r = Monsters.all_class.sample
         display_mon(r)
         menu_monsters
     end
 
     def list_mons
-        list = Cli.main.list[:monsters].map.with_index(1) do |mon, index| "#{index}. #{mon.name}" end
+        list = Monsters.all_class.map.with_index(1) do |mon, index| "#{index}. #{mon.name}" end
         puts list
         menu_monsters
     end
@@ -303,11 +303,11 @@ class MonsterCli
     end
    
     def display_options_type
-        Cli.main.list[:monsters].map { |monster| monster.type }.uniq.each{|type| puts type }
+        Monsters.all_class.map { |monster| monster.type }.uniq.each{|type| puts type }
     end
 
     def display_options_size
-        Cli.main.list[:monsters].map {|monster| monster.size}.uniq.each{|size| puts size }
+        Monsters.all_class.map {|monster| monster.size}.uniq.each{|size| puts size }
     end
 
     def display_mon_list(mon_group)
@@ -327,7 +327,7 @@ class MonsterCli
             elsif input.downcase == 'monster'
                 puts "Please input monster name"
                 input = gets.strip
-                if Cli.main.list[:monsters].any?{|monster| monster.name == input}
+                if Monsters.all_class.any?{|monster| monster.name == input}
                     monster_by_name(input)
                     puts ''
                     display_mon_list(mon_group)

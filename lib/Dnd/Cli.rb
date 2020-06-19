@@ -2,11 +2,8 @@ require_relative '../environment'
 
 class Cli
     attr_reader :list
-    @@self =''
     def initialize
         puts "~~ Welcome to the Dnd 5th Edition Infobook! ~~".colorize(:cyan)
-        @list = {monsters: [], spells: []}
-        @@self = self # <---  this is a nope
         main_menu
     end
 
@@ -39,26 +36,21 @@ class Cli
         if Monsters.all_class == []
             puts "Loading Monsters list, it may take a few minutes"
             Monsters.new
-            @list[:monsters] = Monsters.all_class
             puts"-------------------"
             puts"Loaded Monster list"
             puts"Thanks for waiting!"
             puts"-------------------"
-            else
-            @list[:monsters] = Monsters.all_class
             end
     end
     def spell_load
         if Spells.all_class == []
             puts "Loading Spell list, it may take a few minutes"
             Spells.new
-            @list[:spells] = Spells.all_class
             puts"-------------------"
             puts" Loaded Spell list "
             puts"Thanks for waiting!"
             puts"-------------------"
             else
-            @list[:spells] = Spells.all_class
         end
     end
 
@@ -102,10 +94,6 @@ class Cli
         if yn.downcase == "y"
             dice_modifier(random_roller(original.to_i), mod, original)
         end
-    end
-
-    def self.main
-        @@self
     end
 
     def goodbye
