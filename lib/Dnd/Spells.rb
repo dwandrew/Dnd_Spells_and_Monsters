@@ -7,8 +7,8 @@ class Spells
     @@all_class =[]
     
 def initialize
-    spells= API.get_spells
-    spells["results"].each{|spell| @@all << API.get_spell_url(spell['url'])}
+    spells= API.get_library("spells")
+    spells["results"].each{|spell| @@all << API.get_url(spell['url'], "spells")}
     full_index_class
 end
 

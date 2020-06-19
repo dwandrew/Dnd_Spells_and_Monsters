@@ -6,8 +6,8 @@ class Monsters
     @@all_class =[]
 
     def initialize
-        mons= API.get_monsters
-        mons["results"].each{|mon| @@all << API.get_monster_url(mon['url'])}
+        mons= API.get_library("monsters")
+        mons["results"].each{|mon| @@all << API.get_url(mon['url'], "monsters")}
         full_index_class
     end
 

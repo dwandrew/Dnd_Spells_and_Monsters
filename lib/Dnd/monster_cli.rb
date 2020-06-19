@@ -18,11 +18,14 @@ class MonsterCli
         puts "If you want to return to the Main Menu, type #{'Main'.colorize(:magenta)}"
         puts "If you want to exit, type #{'exit'.colorize(:red)}"
         puts " "
+
         gets_user_input
+
     end
 
     def gets_user_input
         input = gets.strip
+
         if input.downcase == "list"
             list_mons
         elsif input.downcase =='main'
@@ -30,12 +33,14 @@ class MonsterCli
         elsif input.downcase == "by name"
             puts "Type Monster name"
             input = gets.strip
+
              if Cli.main.list[:monsters].any?{|monster| monster.name == input}
                 monster_by_name(input)
                 menu_monsters
              else puts "Sorry, no monster of that name"
                 menu_monsters
             end
+
         elsif input.downcase == 'random'
             random_monster
         elsif input.downcase == 'by group'
@@ -55,6 +60,7 @@ class MonsterCli
         system("clear")
         menu_monsters
     end
+
     def monster_by_name(name)
         mon = Cli.main.list[:monsters].detect{|mon| mon.name == name}
         display_mon(mon)
@@ -76,9 +82,11 @@ class MonsterCli
         puts ""
         puts "Name: ".colorize(:cyan) + "#{mon.name}"
         puts "Type: ".colorize(:cyan) + "#{mon.type}"
+
         if mon.subtype
         puts "Subtype: ".colorize(:cyan) + "#{mon.subtype}"
         end
+
         puts "Size: ".colorize(:cyan)+ "#{mon.size}" 
         puts "Alignment: ".colorize(:cyan) +"#{mon.alignment}"
         puts "Armour class: ".colorize(:cyan) + "#{mon.armor_class}"
@@ -86,9 +94,11 @@ class MonsterCli
         puts "Hit Dice: ".colorize(:cyan) + "#{mon.hit_dice}"
         puts "Challenge Rating: ".colorize(:cyan) + "#{mon.challenge_rating}"
         puts "Speed: ".colorize(:cyan) + "#{mon.speed.map{|k,v| "#{k}: #{v}"}.join("\n")}"
+        
         if mon.other_speeds
             puts "Other speeds: ".colorize(:cyan) + "#{mon.other_speeds}"
         end
+
         puts 'Ability Scores:'.colorize(:cyan)
         puts "  Str: ".colorize(:yellow)+ "#{mon.strength}" +" (#{abilty_score_mod(mon.strength)})"
         puts "  Dex: ".colorize(:yellow) + "#{mon.dexterity}"+" (#{abilty_score_mod(mon.dexterity)})"
@@ -97,34 +107,41 @@ class MonsterCli
         puts "  Wis: ".colorize(:yellow) +  "#{mon.wisdom}"+" (#{abilty_score_mod(mon.wisdom)})"
         puts "  Cha: ".colorize(:yellow) + "#{mon.charisma}"+" (#{abilty_score_mod(mon.charisma)})"
         puts "" 
+
         if mon.proficiencies!=[]
         puts "Proficiencies: ".colorize(:cyan) 
         puts "#{mon.proficiencies.map{|save| "#{save["name"]}: +#{save["value"]}"}.join("\n")}"  
         end
+
         damage_and_condition_modifiers(mon)
         puts ""
         puts "Senses: ".colorize(:cyan)
         puts "#{mon.senses.map{|k,v| "#{k}: #{v}"}.join("\n")}"
+        
         if mon.languages!=""
         puts "Languages: ".colorize(:cyan)
         puts "#{mon.languages}"
         end
-         if mon.special_abilities
+
+        if mon.special_abilities
             puts ''
             puts "Special Abilities: ".colorize(:cyan)
             puts special_abilities(mon)
         end
+
         puts ''
         if mon.actions
         puts "Actions:".colorize(:cyan)
         puts actions(mon)
         end
+
         if mon.reactions
             puts ''
             puts "Reactions: ".colorize(:cyan)
             puts "#{mon.reactions.map{|action| "#{action["name"]}".colorize(:light_blue)+": #{action["desc"]} \n"}.join("\n")}
             "
         end
+
         if mon.legendary_actions
             puts ''
             puts "Legendary Actions: ".colorize(:cyan)
@@ -296,8 +313,8 @@ class MonsterCli
     def display_mon_list(mon_group)
         puts "Would you like to see just the Names, or the full information for the Monster list?"
         puts "Type #{'List'.colorize(:green)} for just the names, #{'Full'.colorize(:green)} for full information," 
-        puts "#{'Monster'.colorize(:green)} to choose an individual Monster, #{'Menu'.colorize(:green)} to return to the Monster Menu"
-        puts "or type exit to #{'exit'.colorize(:red)}"
+        puts "#{'Monster'.colorize(:green)} to choose an individual Monster, input a #{'Number'.colorize(:green)} to select by index"
+        puts "#{'Menu'.colorize(:green)} to return to the Monster Menu or type exit to #{'exit'.colorize(:red)}"
         input = gets.strip
             if input.downcase == 'list'
                 mon_group.each.with_index(1){|mon, index| puts "#{index}. #{mon.name}"}
@@ -319,8 +336,11 @@ class MonsterCli
                 end
             elsif input.downcase == 'menu'
                 menu_monsters
-            elsif input.downcase =="exit"
+            elsif input.downcase == "exit"
                 goodbye
+            elsif input.to_i.between?(0, mon_group.length)
+                monster_by_name(mon_group[input.to_i-1].name)
+                display_mon_list(mon_group) 
             else puts "Sorry thats not an option!"
                 puts ""
                 display_mon_list(mon_group)

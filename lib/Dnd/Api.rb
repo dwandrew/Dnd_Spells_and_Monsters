@@ -2,51 +2,22 @@ require_relative '../environment.rb'
 
 class API
 
-@@url= "https://www.dnd5eapi.co/api/"
+    @@url= "https://www.dnd5eapi.co/api/"
 
-def self.get_spells
-    uri = URI.parse("#{@@url}/spells/")
-    response = Net::HTTP.get_response(uri)
-    body = response.body
-    JSON(body)
-end
+    def self.get_library(library)
+        uri = URI.parse("#{@@url}#{library}/")
+        response = Net::HTTP.get_response(uri)
+        body = response.body
+        JSON(body)
+    end
 
-
-def self.get_spell_url(url)
-    url = url.gsub("/api/spells/", "")
-    uri = URI.parse("#{@@url}/spells/#{url}")
-    response = Net::HTTP.get_response(uri)
-    body = response.body
-    JSON(body)
-end
-
-def self.get_monsters
-    uri = URI.parse("#{@@url}monsters/")
-    response = Net::HTTP.get_response(uri)
-    body = response.body
-    JSON(body)
-end
-
-#d
-
-def self.get_monster_url(url)
-    url = url.gsub("/api/monsters/", "")
-    uri = URI.parse("#{@@url}/monsters/#{url}")
-    response = Net::HTTP.get_response(uri)
-    body = response.body
-    JSON(body)
-end
+    def self.get_url(url, library)
+        url = url.gsub("/api/#{library}/", "")
+        uri = URI.parse("#{@@url}/#{library}/#{url}")
+        response = Net::HTTP.get_response(uri)
+        body = response.body
+        JSON(body)
+    end
 
 end
-# API.get_single_spell("acid-arrow")
-
-# def self.get_spell_name(name)
-#     uri = URI.parse("#{@@url}/spells/#{name}")
-#     response = Net::HTTP.get_response(uri)
-#     body = response.body
-#     JSON(body)
-    
-# end
-
-# binding.pry
 

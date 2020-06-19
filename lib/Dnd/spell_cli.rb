@@ -25,7 +25,8 @@ class SpellCli
     def gets_user_input
         input = gets.strip
         if input.downcase == "list"
-            list_spells
+            list_spells(Cli.main.list[:spells])
+            menu_spells
         elsif input.downcase =='main'
             Cli.main.main_menu
         elsif input.downcase == "by name"
@@ -132,7 +133,7 @@ class SpellCli
     def display_options_classes 
         class_options =[]
         Cli.main.list[:spells].each do |spell| spell.classes.each do |klass| class_options << klass["name"] end end
-        class_options.uniq.each{|klass| puts klass }
+        class_options.uniq.each{|klass| puts klass.colorize(:green) }
     end
 
     def display_options_schools
@@ -142,11 +143,11 @@ class SpellCli
     def display_list(spell_group)
         puts "Would you like to see just the Names, or the full information for the spell list?"
         puts "Type #{'List'.colorize(:green)} for just the names, #{'Full'.colorize(:green)} for full information," 
-        puts "#{'Spell'.colorize(:green)} to choose an individual spell, #{'Menu'.colorize(:green)} to return to the Spells Menu"
-        puts "or type #{'exit'.colorize(:red)} to exit"
+        puts "#{'Spell'.colorize(:green)} to choose an individual spell, input a #{'Number'.colorize(:green)} to select by index"
+        puts "#{'Menu'.colorize(:green)} to return to the Spells Menu or type #{'exit'.colorize(:red)} to exit"
         input = gets.strip
             if input.downcase == 'list'
-                spell_group.each.with_index(1) {|spell, index| puts "#{index}. #{display_spell_name(spell)}"}
+                list_spells(spell_group)
                 display_list(spell_group)
             elsif input.downcase == 'full'
                 spell_group.each {|spell| display_spell(spell)}
@@ -164,12 +165,13 @@ class SpellCli
                 menu_spells
             elsif input.downcase =="exit"
                 goodbye
+            elsif input.to_i.between?(0, spell_group.length)
+                spell_by_name(spell_group[input.to_i-1].name)
+                display_list(spell_group) 
             else puts "Sorry thats not an option!"
                 puts ""
                 display_list(spell_group)
             end 
-
-            
     end
 
     def random_spell
@@ -178,21 +180,15 @@ class SpellCli
         menu_spells
     end
     
-    
-    def list_spells
-        list  = Cli.main.list[:spells].map.with_index(1) do |spell, index| "#{index}. #{spell.name}" end
+    def list_spells(source)
+        # Cli.main.list[:spells]
+        list  = source.map.with_index(1) do |spell, index| "#{index}. #{spell.name}" end
         puts list
-        menu_spells
     end
 
     def spell_by_name(name)
         display_spell(Spells.all_class.detect {|spell| spell.name == name})
     end
-
-    def display_spell_name(spell)
-        spell.name
-    end
-
 
     def display_spell(spell)
         puts ''
