@@ -1,8 +1,7 @@
 require_relative '../environment.rb'
 
 class Spells
-    attr_reader  :_id, :index, :name, :desc, :casting_time, :classes, :subclasses, :url, :level, :school, :higher_level, :range, :components, :ritual, :material, :duration, :concentration 
-
+    
     @@all =[]
     @@all_class =[]
     
