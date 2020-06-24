@@ -92,7 +92,7 @@ class MonsterCli
         puts "Armour class: ".colorize(:cyan) + "#{mon.armor_class}"
         puts "Hit Points: ".colorize(:cyan) + "#{mon.hit_points}"
         puts "Hit Dice: ".colorize(:cyan) + "#{mon.hit_dice}"
-        puts "Challenge Rating: ".colorize(:cyan) + "#{mon.challenge_rating}"
+        puts "Challenge Rating: ".colorize(:cyan) + "#{cr(mon)}"
         puts "Speed: ".colorize(:cyan) + "#{mon.speed.map{|k,v| "#{k}: #{v}"}.join("\n")}"
         
         if mon.other_speeds
@@ -151,6 +151,18 @@ class MonsterCli
         
         puts "------   ------   ------".colorize(:yellow)
         puts ""
+    end
+
+    def cr(mon)
+        if mon.challenge_rating == 0.125
+            "1/8"
+        elsif mon.challenge_rating == 0.25
+            "1/4"
+        elsif mon.challenge_rating ==0.5
+            "1/2"
+        else 
+            mon.challenge_rating
+        end
     end
     
     def abilty_score_mod(score)
