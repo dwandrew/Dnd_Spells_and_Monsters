@@ -7,7 +7,11 @@ class Spells
     
 def initialize
     spells= API.get_library("spells")
-    spells["results"].each{|spell| @@all << API.get_url(spell['url'], "spells")}
+    bar = ProgressBar.new(spells["count"], :bar, :percentage)
+    spells["results"].each do |spell| 
+        @@all<< API.get_url(spell['url'], "spells") 
+        bar.increment!
+        end
     full_index_class
 end
 

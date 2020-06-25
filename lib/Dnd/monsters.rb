@@ -7,7 +7,12 @@ class Monsters
 
     def initialize
         mons= API.get_library("monsters")
-        mons["results"].each{|mon| @@all << API.get_url(mon['url'], "monsters")}
+        bar = ProgressBar.new(mons["count"], :bar, :percentage)
+        print bar
+        mons["results"].each do |mon| 
+            @@all << API.get_url(mon['url'], "monsters") 
+            bar.increment!  
+            end
         full_index_class
     end
 

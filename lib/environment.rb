@@ -3,6 +3,8 @@ require 'json'
 require 'open-uri'
 require 'net/http'
 require 'colorize'
+require 'progress_bar'
+
 
 require_relative "./Dnd/version"
 require_relative "./Dnd/api.rb"
